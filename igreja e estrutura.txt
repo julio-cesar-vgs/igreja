@@ -1,0 +1,95 @@
+Arquitetura do Backend para o Sistema de Gestão de Igrejas
+Vou responder com máxima precisão, direto ao ponto, sem rodeios ou moralismos desnecessários. O foco é no design da arquitetura do backend, como solicitado. Ignoro o frontend por enquanto, mas noto que Android com armazenamento local (ex.: Room DB) faz sentido para offline sync, usando algo como Retrofit para API calls e WorkManager para sync em background quando a rede voltar. Mas isso é futuro.
+O sistema é multi-tenant: uma igreja matriz (sede) com visão global, e congregações filiais com acesso restrito. Usuários têm roles (admin/pastor sede, pastor local, cooperador, tesoureiro). Dados em tempo real via streaming (Kafka), com logs automáticos para correções. Backend em Java com Spring Boot 3.x (mais recente, com suporte a Java 21+ para features como virtual threads).
+Visão Geral de Alto Nível
+
+Modelo de Dados: Multi-tenant com schema compartilhado (um DB, mas com tenant_id em todas as tabelas para isolamento). Isso evita overhead de DBs separados, mas garante queries filtradas por tenant (igreja_id).
+Autenticação e Autorização: JWT com Spring Security. Roles: SUPER_ADMIN (pastor sede, vê tudo), LOCAL_ADMIN (pastor local, vê só sua igreja), COOPERADOR (insere/edita itens não-financeiros), TESOUREIRO (acesso a finanças).
+API: RESTful com WebSockets para real-time (via Spring WebSocket + STOMP). Endpoints protegidos por roles.
+Mensageria: Kafka para eventos assíncronos (ex.: atualizações de culto em tempo real, logs de correções). Producers/Consumers em Spring Kafka.
+Containerização: Docker para deploy. Compose para dev, Kubernetes para prod se escalar.
+Banco de Dados: PostgreSQL (escalável, bom para JSONB em logs). Redis para cache de sessões e dados voláteis (ex.: contagens em tempo real).
+Gerenciamento de Erros/Latência: Resilience4j para circuit breakers, retries e rate limiting. Kafka com acks=all e retries para idempotência. Logging com SLF4J + ELK stack (Elasticsearch, Logstash, Kibana) para traces.
+Escalabilidade: Monólito inicial, mas com serviços loosely coupled via Kafka (fácil splitar em microservices depois, ex.: auth service, culto service).
+
+Diagrama de Arquitetura (ASCII Art para Simplicidade)
+text[Mobile App (Android) - Futuro] <--> [API Gateway (Zuul/ Spring Cloud Gateway)] 
+                                    |
+                                    v
++-------------------+          +-------------------+          +-------------------+
+|                   |          |                   |          |                   |
+|  Auth Service     | <-->     |  Core API Service | <-->     |  Event Service    |
+|  (JWT, Users)     | Kafka    |  (REST + WS)      | Kafka    |  (Kafka Consumers)|
+|                   | Topics   |                   | Topics   |                   |
++-------------------+          +-------------------+          +-------------------+
+         |                                |                           |
+         v                                v                           v
++-------------------+          +-------------------+          +-------------------+
+|                   |          |                   |          |                   |
+|  PostgreSQL DB    |          |  Redis Cache      |          |  Kafka Cluster    |
+|  (Multi-tenant)   |          |  (Sessions, RT)   |          |  (Topics: cultos, |
+|                   |          |                   |          |   logs, errors)   |
++-------------------+          +-------------------+          +-------------------+
+
+- Logs/Errors: [ELK Stack] <--> Services (para monitoring)
+- Deploy: Docker Containers -> Orchestrated by Docker Compose/K8s
+Componentes Detalhados
+
+Banco de Dados (PostgreSQL):
+Schemas/Tabelas Principais:
+igreja (id, nome, tipo: MATRIZ ou FILIAL, endereco).
+usuario (id, nome, email, senha_hash, role, igreja_id). Pastor sede tem igreja_id null ou especial para visão global.
+culto (id, igreja_id, data_hora, tema, palavra_inicial_por, palavra_final_por, total_pessoas). Status: EM_ANDAMENTO, FINALIZADO.
+louvor (id, culto_id, pessoa_nome, hino_opcional). Obrigatório nome.
+cooperador (id, culto_id, nome, cargo).
+presbitero (id, culto_id, nome).
+musico (id, culto_id, nome).
+visitante (id, culto_id, nome).
+dizimo (id, culto_id, nome, valor). Acesso só tesoureiro.
+oferta (id, culto_id, valor). Agregado, sem nome.
+tesoureiro_conferencia (id, culto_id, tesoureiro_id, total_conferido).
+log_correcao (id, entidade_tipo, entidade_id, acao: INSERT/UPDATE/DELETE, usuario_id, timestamp, valor_antigo, valor_novo). Automático via AOP (Aspect-Oriented Programming) no Spring.
+
+Cálculos: Views ou queries agregadas para totais (ex.: COUNT(*) para presenças, SUM(valor) para finanças).
+Multi-tenant: Filtro global via Spring Data JPA @Query com WHERE igreja_id = :currentIgrejaId (obtido do JWT).
+
+API Service (Spring Boot):
+Endpoints Exemplo:
+POST /cultos/{igrejaId} - Cria culto (somente admins).
+GET /cultos/{cultoId}/dashboard - Retorna JSON com todos os dados (louvores, contagens, finanças). Filtrado por role (tesouraria só para tesoureiros).
+POST /cultos/{cultoId}/louvor - Adiciona louvor (cooperadores). Similar para outros itens.
+DELETE /cultos/{cultoId}/louvor/{id} - Apaga, com log automático.
+GET /igrejas - Lista igrejas (somente super_admin).
+WebSocket: /ws/cultos/{cultoId} - Subscribe para updates em tempo real (ex.: novo louvor publicado via Kafka).
+
+Real-time: Quando dados são inseridos/editados, publish event no Kafka. Consumers atualizam cache Redis e broadcast via WebSocket.
+Offline Sync: API idempotente (usa UUIDs para itens). Mobile envia batch de changes quando online; backend resolve conflitos por timestamp.
+
+Kafka Integration:
+Topics:
+culto-updates: Para eventos de insert/update/delete em itens de culto.
+logs-correcoes: Para logging automático.
+errors-retries: Dead-letter queue para falhas, com retries (ex.: 3 tentativas com backoff exponencial).
+
+Config: Spring Kafka com @KafkaListener. Partitions para escalabilidade (ex.: por igreja_id). Acks=all para durabilidade. Latency handling: Timeouts em producers (default 30s), com retries via Resilience4j.
+Error Correction: Se mensagem falha (ex.: DB down), vai para DLQ. Scheduler periodical retry. Idempotência via unique keys nos eventos.
+
+Auth Service:
+Separação lógica (pode ser no mesmo app inicial). Endpoints: /login (retorna JWT), /usuarios (CRUD, só super_admin adiciona igrejas/filiais).
+Claims no JWT: user_id, role, igreja_id. Interceptor verifica acesso: ex., pastor local só vê igreja_id próprio; sede vê todos.
+
+Error Management & Latency:
+Retries: Resilience4j @Retry em methods críticos (ex.: DB writes). Max 5 attempts, wait 2s exponential.
+Circuit Breaker: @CircuitBreaker em Kafka producers/consumers. Abre se >50% falhas em 10 calls.
+Monitoring: Micrometer + Prometheus para metrics (latency, error rates). Grafana para dashboards.
+Correção de Erros: Logs automáticos via Spring AOP: Antes/depois de CRUD, capture changes e insira em log_correcao. Sem intervenção user.
+Latência: Cache Redis para reads frequentes (ex.: dashboard). TTL 5min. Kafka para async, evitando bloqueios.
+
+
+Próximos Passos & Considerações
+
+Implementação Inicial: Comece com monólito em Spring Boot. Adicione Kafka via dependency. Dockerize: Dockerfile com multi-stage build (compile + runtime).
+Segurança: HTTPS obrigatório. Senhas com BCrypt. Auditoria em finanças (imutável após conferencia).
+Custos: Kafka precisa cluster (min 3 nodes para HA). Comece com embedded para dev.
+Limitações: Se rede instável, real-time pode lagar; fallback para polling no app. Não é escalável para milhares de igrejas sem microservices.
+Código Base: Use Spring Initializr com deps: web, data-jpa, security, kafka, websocket, resilience4j.
