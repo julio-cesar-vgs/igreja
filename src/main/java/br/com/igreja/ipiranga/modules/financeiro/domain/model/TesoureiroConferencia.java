@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Entidade que registra a conferência financeira de um culto feita por um tesoureiro.
@@ -27,14 +28,14 @@ import java.math.BigDecimal;
 @Builder
 public class TesoureiroConferencia {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "culto_id", nullable = false)
     private Culto culto;
 
-    private Long tesoureiroId;
+    private UUID tesoureiroId;
 
     private BigDecimal totalConferido;
 

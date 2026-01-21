@@ -3,6 +3,7 @@ package br.com.igreja.ipiranga.modules.audit.domain.model;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,12 +15,17 @@ class LogCorrecaoTest {
         LocalDateTime timestamp = LocalDateTime.now();
 
         // Act
+        UUID id = UUID.randomUUID();
+        UUID entidadeId = UUID.randomUUID();
+        UUID usuarioId = UUID.randomUUID();
+
+        // Act
         LogCorrecao log = LogCorrecao.builder()
-                .id(1L)
+                .id(id)
                 .entidadeTipo("Usuario")
-                .entidadeId(10L)
+                .entidadeId(entidadeId)
                 .acao("INSERT")
-                .usuarioId(5L)
+                .usuarioId(usuarioId)
                 .timestamp(timestamp)
                 .valorAntigo("old value")
                 .valorNovo("new value")
@@ -27,11 +33,11 @@ class LogCorrecaoTest {
 
         // Assert
         assertThat(log).isNotNull();
-        assertThat(log.getId()).isEqualTo(1L);
+        assertThat(log.getId()).isEqualTo(id);
         assertThat(log.getEntidadeTipo()).isEqualTo("Usuario");
-        assertThat(log.getEntidadeId()).isEqualTo(10L);
+        assertThat(log.getEntidadeId()).isEqualTo(entidadeId);
         assertThat(log.getAcao()).isEqualTo("INSERT");
-        assertThat(log.getUsuarioId()).isEqualTo(5L);
+        assertThat(log.getUsuarioId()).isEqualTo(usuarioId);
         assertThat(log.getTimestamp()).isEqualTo(timestamp);
         assertThat(log.getValorAntigo()).isEqualTo("old value");
         assertThat(log.getValorNovo()).isEqualTo("new value");
@@ -60,24 +66,28 @@ class LogCorrecaoTest {
         LocalDateTime timestamp = LocalDateTime.now();
 
         // Act
+        UUID id = UUID.randomUUID();
+        UUID entidadeId = UUID.randomUUID();
+        UUID usuarioId = UUID.randomUUID();
+
+        // Act
         LogCorrecao log = new LogCorrecao(
-                1L,
+                id,
                 "Culto",
-                100L,
+                entidadeId,
                 "UPDATE",
-                20L,
+                usuarioId,
                 timestamp,
                 "old culto data",
-                "new culto data"
-        );
+                "new culto data");
 
         // Assert
         assertThat(log).isNotNull();
-        assertThat(log.getId()).isEqualTo(1L);
+        assertThat(log.getId()).isEqualTo(id);
         assertThat(log.getEntidadeTipo()).isEqualTo("Culto");
-        assertThat(log.getEntidadeId()).isEqualTo(100L);
+        assertThat(log.getEntidadeId()).isEqualTo(entidadeId);
         assertThat(log.getAcao()).isEqualTo("UPDATE");
-        assertThat(log.getUsuarioId()).isEqualTo(20L);
+        assertThat(log.getUsuarioId()).isEqualTo(usuarioId);
         assertThat(log.getTimestamp()).isEqualTo(timestamp);
         assertThat(log.getValorAntigo()).isEqualTo("old culto data");
         assertThat(log.getValorNovo()).isEqualTo("new culto data");
@@ -90,21 +100,26 @@ class LogCorrecaoTest {
         LocalDateTime timestamp = LocalDateTime.now();
 
         // Act
-        log.setId(99L);
+        UUID id = UUID.randomUUID();
+        UUID entidadeId = UUID.randomUUID();
+        UUID usuarioId = UUID.randomUUID();
+
+        // Act
+        log.setId(id);
         log.setEntidadeTipo("Oferta");
-        log.setEntidadeId(55L);
+        log.setEntidadeId(entidadeId);
         log.setAcao("DELETE");
-        log.setUsuarioId(33L);
+        log.setUsuarioId(usuarioId);
         log.setTimestamp(timestamp);
         log.setValorAntigo("deleted value");
         log.setValorNovo(null);
 
         // Assert
-        assertThat(log.getId()).isEqualTo(99L);
+        assertThat(log.getId()).isEqualTo(id);
         assertThat(log.getEntidadeTipo()).isEqualTo("Oferta");
-        assertThat(log.getEntidadeId()).isEqualTo(55L);
+        assertThat(log.getEntidadeId()).isEqualTo(entidadeId);
         assertThat(log.getAcao()).isEqualTo("DELETE");
-        assertThat(log.getUsuarioId()).isEqualTo(33L);
+        assertThat(log.getUsuarioId()).isEqualTo(usuarioId);
         assertThat(log.getTimestamp()).isEqualTo(timestamp);
         assertThat(log.getValorAntigo()).isEqualTo("deleted value");
         assertThat(log.getValorNovo()).isNull();
@@ -114,15 +129,16 @@ class LogCorrecaoTest {
     void equals_WithSameData_ShouldReturnTrue() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.now();
+        UUID id = UUID.randomUUID();
         LogCorrecao log1 = LogCorrecao.builder()
-                .id(1L)
+                .id(id)
                 .entidadeTipo("Usuario")
                 .acao("INSERT")
                 .timestamp(timestamp)
                 .build();
 
         LogCorrecao log2 = LogCorrecao.builder()
-                .id(1L)
+                .id(id)
                 .entidadeTipo("Usuario")
                 .acao("INSERT")
                 .timestamp(timestamp)
@@ -136,15 +152,16 @@ class LogCorrecaoTest {
     void hashCode_WithSameData_ShouldReturnSameHashCode() {
         // Arrange
         LocalDateTime timestamp = LocalDateTime.now();
+        UUID id = UUID.randomUUID();
         LogCorrecao log1 = LogCorrecao.builder()
-                .id(1L)
+                .id(id)
                 .entidadeTipo("Usuario")
                 .acao("INSERT")
                 .timestamp(timestamp)
                 .build();
 
         LogCorrecao log2 = LogCorrecao.builder()
-                .id(1L)
+                .id(id)
                 .entidadeTipo("Usuario")
                 .acao("INSERT")
                 .timestamp(timestamp)
@@ -157,8 +174,9 @@ class LogCorrecaoTest {
     @Test
     void toString_ShouldReturnStringRepresentation() {
         // Arrange
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000001");
         LogCorrecao log = LogCorrecao.builder()
-                .id(1L)
+                .id(id)
                 .entidadeTipo("Usuario")
                 .acao("INSERT")
                 .build();
@@ -168,7 +186,7 @@ class LogCorrecaoTest {
 
         // Assert
         assertThat(result).contains("LogCorrecao");
-        assertThat(result).contains("id=1");
+        assertThat(result).contains("id=00000000-0000-0000-0000-000000000001");
         assertThat(result).contains("entidadeTipo=Usuario");
         assertThat(result).contains("acao=INSERT");
     }

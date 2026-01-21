@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.UUID;
 
 /**
  * Serviço de utilidade para manipulação de JSON Web Tokens (JWT).
@@ -60,10 +61,11 @@ public class JwtService {
      * </p>
      *
      * @param token O token JWT.
-     * @return O Long representando o ID da igreja.
+     * @return O UUID representando o ID da igreja.
      */
-    public Long extractIgrejaId(String token) {
-        return extractClaim(token, claims -> claims.get("igreja_id", Long.class));
+    public UUID extractIgrejaId(String token) {
+        String idStr = extractClaim(token, claims -> claims.get("igreja_id", String.class));
+        return idStr != null ? UUID.fromString(idStr) : null;
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -81,9 +83,9 @@ public class JwtService {
      * @param igrejaId O ID da igreja vinculada ao usuário.
      * @return Uma string contendo o token JWT assinado.
      */
-    public String generateToken(UserDetails userDetails, Long igrejaId) {
+    public String generateToken(UserDetails userDetails, UUID igrejaId) {
         Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("igreja_id", igrejaId);
+        extraClaims.put("igreja_id", igrejaId.toString());
         return generateToken(extraClaims, userDetails);
     }
 

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * Entidade que representa a presença de um Presbítero no culto.
  *
@@ -20,8 +22,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Presbitero {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "culto_id", nullable = false)

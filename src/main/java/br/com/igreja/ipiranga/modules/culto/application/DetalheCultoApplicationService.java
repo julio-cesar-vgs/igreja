@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Serviço de Aplicação especializado na gestão dos detalhes e itens que compõem um culto.
@@ -61,7 +62,7 @@ public class DetalheCultoApplicationService {
      * @throws RuntimeException caso o culto não exista.
      */
     @Cacheable(value = "dashboards", key = "#cultoId")
-    public CultoDashboardDTO getDashboard(Long cultoId) {
+    public CultoDashboardDTO getDashboard(UUID cultoId) {
         Culto culto = cultoRepository.findById(cultoId)
                 .orElseThrow(() -> new RuntimeException("Culto não encontrado"));
 
@@ -200,7 +201,7 @@ public class DetalheCultoApplicationService {
         return saved;
     }
     
-    private BigDecimal calcularTotalSistema(Long cultoId) {
+    private BigDecimal calcularTotalSistema(UUID cultoId) {
         BigDecimal totalDizimos = dizimoRepository.findByCultoId(cultoId).stream()
                 .map(Dizimo::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

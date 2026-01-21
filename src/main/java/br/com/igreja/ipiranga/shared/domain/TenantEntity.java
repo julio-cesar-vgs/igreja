@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.TenantId;
 
+import java.util.UUID;
+
 /**
  * Superclasse abstrata base para todas as entidades que requerem suporte a Multi-tenancy (Multilocação).
  * <p>
@@ -38,7 +40,7 @@ public abstract class TenantEntity {
      */
     @TenantId
     @Column(name = "igreja_id")
-    private Long igrejaId;
+    private UUID igrejaId;
 
     /**
      * Lista de eventos de domínio registrados por esta entidade.

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Entidade que representa um Dízimo.
@@ -30,9 +31,11 @@ import java.math.BigDecimal;
  * @version 1.0
  */
 /**
- * Entidade que registra a conferência financeira de um culto feira por um tesoureiro.
+ * Entidade que registra a conferência financeira de um culto feira por um
+ * tesoureiro.
  * <p>
- * Serve como um mecanismo de controle e segurança ("quatro olhos"), onde um tesoureiro
+ * Serve como um mecanismo de controle e segurança ("quatro olhos"), onde um
+ * tesoureiro
  * valida e assina digitalmente (pelo ID) o total arrecadado.
  * </p>
  *
@@ -48,8 +51,8 @@ import java.math.BigDecimal;
 public class Dizimo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "culto_id", nullable = false)

@@ -42,7 +42,15 @@ public class AuthenticationController {
     @PostMapping("/register")
     @Operation(summary = "Registrar um novo usuário", description = "Cria um novo usuário e retorna o token JWT")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(service.register(request));
+        // Solução Arquitetural:
+        // O Transactional do Service abre a sessão do Hibernate ANTES do corpo do método.
+        // Portanto, o TenantContext precisa ser definido AQUI no Controller, antes de chamar o Service.
+        br.com.igreja.ipiranga.infrastructure.tenant.TenantContext.setCurrentTenant(request.getIgrejaId());
+        try {
+            return ResponseEntity.ok(service.register(request));
+        } finally {
+            br.com.igreja.ipiranga.infrastructure.tenant.TenantContext.clear();
+        }
     }
 
     /**

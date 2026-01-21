@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * Entidade que representa um hino, corinho ou oportunidade de louvor concedida durante o culto.
  * <p>
@@ -24,8 +26,8 @@ import lombok.NoArgsConstructor;
 public class Louvor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "culto_id", nullable = false)

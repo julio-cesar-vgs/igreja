@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * DTO contendo os dados necessários para cadastrar um novo usuário no sistema.
  * <p>
@@ -47,7 +49,7 @@ public class RegisterRequest {
      * ID da igreja à qual este usuário será vinculado.
      */
     @NotNull(message = "O ID da igreja é obrigatório")
-    private Long igrejaId;
+    private UUID igrejaId;
 
     /**
      * Perfil de acesso do usuário (ADMIN, USER, TESOUREIRO).

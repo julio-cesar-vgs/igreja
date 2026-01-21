@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * Entidade que registra os dados de um Visitante pela primeira vez no culto (ou recorrente).
  * <p>
@@ -23,8 +25,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Visitante {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "culto_id", nullable = false)

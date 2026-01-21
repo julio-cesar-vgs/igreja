@@ -5,18 +5,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+import java.util.UUID;
+
 /**
  * Repositório de acesso a dados para a entidade {@link Louvor}.
  *
  * @author Sistema Igreja
  * @version 1.0
  */
-public interface LouvorRepository extends JpaRepository<Louvor, Long> {
+public interface LouvorRepository extends JpaRepository<Louvor, UUID> {
     /**
      * Lista os louvores entoados em um culto.
      *
      * @param cultoId ID do culto.
      * @return Lista de louvores.
      */
-    List<Louvor> findByCultoId(Long cultoId);
+    List<Louvor> findByCultoId(UUID cultoId);
 }

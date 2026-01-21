@@ -9,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Controlador REST para administração de Igrejas.
@@ -44,7 +45,7 @@ public class IgrejaController {
      * @return ResponseEntity com os dados da igreja.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Igreja> getById(@PathVariable Long id) {
+    public ResponseEntity<Igreja> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -67,12 +68,12 @@ public class IgrejaController {
     /**
      * Atualiza os dados de uma igreja existente.
      *
-     * @param id ID da igreja a atualizar.
+     * @param id     ID da igreja a atualizar.
      * @param igreja Objeto JSON com os novos dados.
      * @return ResponseEntity com a igreja atualizada.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Igreja> update(@PathVariable Long id, @RequestBody Igreja igreja) {
+    public ResponseEntity<Igreja> update(@PathVariable UUID id, @RequestBody Igreja igreja) {
         igreja.setId(id);
         return ResponseEntity.ok(service.save(igreja));
     }
@@ -84,7 +85,7 @@ public class IgrejaController {
      * @return ResponseEntity sem conteúdo (204).
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

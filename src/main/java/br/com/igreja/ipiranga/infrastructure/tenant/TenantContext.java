@@ -2,6 +2,8 @@ package br.com.igreja.ipiranga.infrastructure.tenant;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.UUID;
+
 /**
  * Classe utilitária responsável por manter o contexto do Tenant (Igreja) atual.
  * <p>
@@ -20,13 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TenantContext {
 
-    private static final ThreadLocal<Long> CURRENT_TENANT = new ThreadLocal<>();
+    private static final ThreadLocal<UUID> CURRENT_TENANT = new ThreadLocal<>();
 
     /**
      * Define o ID do tenant atual para a thread em execução.
-     * @param tenantId Long representando o ID da igreja.
+     * @param tenantId UUID representando o ID da igreja.
      */
-    public static void setCurrentTenant(Long tenantId) {
+    public static void setCurrentTenant(UUID tenantId) {
         log.debug("Setting current tenant to {}", tenantId);
         CURRENT_TENANT.set(tenantId);
     }
@@ -35,7 +37,7 @@ public class TenantContext {
      * Recupera o ID do tenant associado à thread atual.
      * @return O ID da igreja ou null se não estiver definido.
      */
-    public static Long getCurrentTenant() {
+    public static UUID getCurrentTenant() {
         return CURRENT_TENANT.get();
     }
 

@@ -5,18 +5,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+import java.util.UUID;
+
 /**
  * Repositório de acesso a dados para a entidade {@link Presbitero}.
  *
  * @author Sistema Igreja
  * @version 1.0
  */
-public interface PresbiteroRepository extends JpaRepository<Presbitero, Long> {
+public interface PresbiteroRepository extends JpaRepository<Presbitero, UUID> {
     /**
      * Busca os presbíteros presentes em um culto.
      *
      * @param cultoId ID do culto.
      * @return Lista de presbíteros.
      */
-    List<Presbitero> findByCultoId(Long cultoId);
+    List<Presbitero> findByCultoId(UUID cultoId);
 }

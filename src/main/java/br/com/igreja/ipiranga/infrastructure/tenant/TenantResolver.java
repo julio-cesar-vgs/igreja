@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomi
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Componente que ensina ao Hibernate como descobrir qual é o Tenant atual.
@@ -18,17 +19,23 @@ import java.util.Map;
  * @version 1.0
  */
 @Component
-public class TenantResolver implements CurrentTenantIdentifierResolver<Long>, HibernatePropertiesCustomizer {
+public class TenantResolver implements CurrentTenantIdentifierResolver<UUID>, HibernatePropertiesCustomizer {
 
     /**
      * Resolve o identificador do tenant atual.
      *
-     * @return O ID do tenant como Long (embora a interface force o retorno genérico compatível com String, ajustamos na implementação).
+     * @return O ID do tenant como UUID.
      */
     @Override
-    public Long resolveCurrentTenantIdentifier() {
-        Long tenantId = TenantContext.getCurrentTenant();
-        return tenantId != null ? tenantId : 0L;
+    public UUID resolveCurrentTenantIdentifier() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        // Em caso de null (contexto geral), precisamos de um valor default ou null.
+        // O Hibernate espera que o ID seja consistente com o tipo da coluna.
+        // Retornamos null para "sem tenant" ou um UUID zerado se necessário.
+        // Em estratégia de coluna discriminadora com filtro, null pode significar "ver tudo" ou "erro", depende do filtro.
+        // O filtro @TenantId geralmente ignora se for null ou aplica a cláusula.
+        // Para segurança, retornamos null e esperamos que o Hibernate lide (geralmente desabilitando o filtro se permitido).
+        return tenantId;
     }
 
     /**

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * Representa uma unidade física da organização religiosa (Igreja).
  * <p>
@@ -26,8 +28,8 @@ import lombok.NoArgsConstructor;
 public class Igreja {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false)
     private String nome;

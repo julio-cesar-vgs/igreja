@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+import java.util.UUID;
+
 /**
  * Repositório JPA para gerenciamento da entidade {@link Usuario}.
  * <p>
@@ -16,7 +18,7 @@ import java.util.Optional;
  * @author Sistema Igreja
  * @version 1.0
  */
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     /**
      * Busca um usuário pelo seu endereço de e-mail.
      *

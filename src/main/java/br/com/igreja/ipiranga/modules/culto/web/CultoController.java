@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Controlador REST API para operações CRUD no recurso /api/cultos.
@@ -35,7 +36,7 @@ public class CultoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Culto> getById(@PathVariable Long id) {
+    public ResponseEntity<Culto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
@@ -45,13 +46,13 @@ public class CultoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Culto> update(@PathVariable Long id, @RequestBody Culto culto) {
+    public ResponseEntity<Culto> update(@PathVariable UUID id, @RequestBody Culto culto) {
         culto.setId(id);
         return ResponseEntity.ok(service.save(culto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Serviço de aplicação para gestão do cadastro de Igrejas.
@@ -40,7 +41,7 @@ public class IgrejaApplicationService {
      * @return A entidade Igreja encontrada.
      * @throws RuntimeException se não encontrada.
      */
-    public Igreja findById(Long id) {
+    public Igreja findById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Igreja não encontrada"));
     }
@@ -59,14 +60,15 @@ public class IgrejaApplicationService {
     /**
      * Remove uma igreja do sistema.
      * <p>
-     * Cuidado: Isso pode ter impactos em cascata se houver integridade referencial não tratada,
+     * Cuidado: Isso pode ter impactos em cascata se houver integridade referencial
+     * não tratada,
      * embora o ideal seja exclusão lógica.
      * </p>
      *
      * @param id ID da igreja a remover.
      */
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 }

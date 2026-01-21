@@ -7,15 +7,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
- * Entidade responsável por registrar a trilha de auditoria (Audit Trail) de alterações de dados.
+ * Entidade responsável por registrar a trilha de auditoria (Audit Trail) de
+ * alterações de dados.
  * <p>
- * O objetivo é fornecer responsabilidade (accountability) e rastreabilidade sobre quem fez o que e quando.
- * Esta tabela crescerá indefinidamente e pode servir para análise forense ou recuperação de erros operacionais.
+ * O objetivo é fornecer responsabilidade (accountability) e rastreabilidade
+ * sobre quem fez o que e quando.
+ * Esta tabela crescerá indefinidamente e pode servir para análise forense ou
+ * recuperação de erros operacionais.
  * </p>
  * <p>
- * Consumido principalmente pelo Aspecto de Auditoria {@link br.com.igreja.ipiranga.modules.audit.infrastructure.AuditAspect}.
+ * Consumido principalmente pelo Aspecto de Auditoria
+ * {@link br.com.igreja.ipiranga.modules.audit.infrastructure.AuditAspect}.
  * </p>
  *
  * @author Sistema Igreja
@@ -30,8 +35,8 @@ import java.time.LocalDateTime;
 public class LogCorrecao {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     /**
      * Tipo da entidade que sofreu alteração (ex: Culto, Dizimo).
@@ -41,7 +46,7 @@ public class LogCorrecao {
     /**
      * ID da entidade que sofreu alteração.
      */
-    private Long entidadeId;
+    private UUID entidadeId;
 
     /**
      * Ação realizada (INSERT/UPDATE ou DELETE).
@@ -51,19 +56,19 @@ public class LogCorrecao {
     /**
      * ID do usuário que realizou a ação.
      */
-    private Long usuarioId;
+    private UUID usuarioId;
 
     /**
      * Data e hora da ocorrência.
      */
     private LocalDateTime timestamp;
-    
+
     /**
      * Representação JSON ou String do estado anterior da entidade (se aplicável).
      */
     @Column(columnDefinition = "TEXT")
     private String valorAntigo;
-    
+
     /**
      * Representação JSON ou String do novo estado da entidade.
      */

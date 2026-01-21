@@ -3,6 +3,8 @@ package br.com.igreja.ipiranga.modules.igreja.domain.repository;
 import br.com.igreja.ipiranga.modules.igreja.domain.model.Igreja;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.UUID;
+
 /**
  * Interface de Repositório para gerenciamento da entidade {@link Igreja}.
  * <p>
@@ -14,5 +16,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Sistema Igreja
  * @version 1.0
  */
-public interface IgrejaRepository extends JpaRepository<Igreja, Long> {
+public interface IgrejaRepository extends JpaRepository<Igreja, UUID> {
 }
