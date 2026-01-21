@@ -29,9 +29,11 @@ class TesoureiroConferenciaTest {
         Culto culto = Culto.builder().id(10L).build();
         Long tesoureiroId = 5L;
         BigDecimal totalConferido = BigDecimal.valueOf(1000.00);
+        TesoureiroConferencia.StatusConferencia status = TesoureiroConferencia.StatusConferencia.CONFERIDO;
+        BigDecimal diferenca = BigDecimal.ZERO;
 
         // When
-        TesoureiroConferencia conferencia = new TesoureiroConferencia(id, culto, tesoureiroId, totalConferido);
+        TesoureiroConferencia conferencia = new TesoureiroConferencia(id, culto, tesoureiroId, totalConferido, status, diferenca);
 
         // Then
         assertThat(conferencia).isNotNull();
@@ -39,6 +41,8 @@ class TesoureiroConferenciaTest {
         assertThat(conferencia.getCulto()).isEqualTo(culto);
         assertThat(conferencia.getTesoureiroId()).isEqualTo(tesoureiroId);
         assertThat(conferencia.getTotalConferido()).isEqualByComparingTo(totalConferido);
+        assertThat(conferencia.getStatus()).isEqualTo(status);
+        assertThat(conferencia.getDiferenca()).isEqualTo(diferenca);
     }
 
     @Test

@@ -12,6 +12,7 @@ Uma dúvida comum neste projeto foi a escolha entre banco de dados Relacional ou
     - **Timezone**: Configurado para `America/Sao_Paulo`.
 2.  **Redis (NoSQL Key-Value)**: Utilizado para **Cache e Real-time**.
     - Agiliza a leitura de dashboards consolidados e estados temporários do culto.
+    - **Estratégia**: Utiliza `@Cacheable` no `CultoDashboardDTO` para evitar recálculos caros e `@CacheEvict` nos métodos de escrita para invalidação imediata.
 3.  **Kafka (NoSQL Log-based)**: Utilizado para **Mensageria e Eventos**.
     - Garante que o sistema seja **Event-Driven**, permitindo que atualizações de um contexto (ex: novo dízimo) notifiquem outros contextos ou o frontend em tempo real.
 
@@ -39,15 +40,25 @@ A estrutura de pacotes agora segue um padrão vertical por módulo:
 - **Infrastructure**: Implementações técnicas (Persistência, Segurança, Integrações Kafka).
 - **Web**: Controllers REST que expõem as funcionalidades.
 
+### Regras de Negócio e Validações
+O sistema implementa validações fortes no domínio:
+- **Conferência Financeira ("Quatro Olhos")**: Ao registrar o fechamento do caixa (Tesoureiro), o sistema compara automaticamente o valor informado com a soma dos registros de Dízimos e Ofertas.
+    - Se houver divergência, o registro não é bloqueado, mas salvo com status `DIVERGENTE` e a diferença calculada, permitindo auditoria posterior.
+    - Se coincidir, o status é gravado como `CONFERIDO`.
+
 ---
 
 ## 📡 Event-Driven Architecture
 
 O sistema utiliza eventos para comunicação desacoplada:
 
-1.  **Domain Events**: Eventos que ocorrem dentro do domínio (ex: `CultoIniciado`). Atualmente representados pela classe base `DomainEvent`.
-2.  **Integration Events (Kafka)**: Mensagens enviadas para o tópico `culto-updates` sempre que uma alteração relevante ocorre.
-3.  **Real-time (WebSockets)**: O `CultoEventListener` captura eventos do Kafka e os transmite via WebSocket para o frontend, permitindo atualizações instantâneas no dashboard sem necessidade de refresh.
+1.  **Domain Events (Eventos de Aplicação)**: 
+    - Eventos internos do Spring (`ApplicationEventPublisher`) disparados pelos Services quando uma ação de negócio ocorre (ex: `ItemCultoAdicionado`, `CultoAtualizado`).
+    - Desacoplam a regra de negócio da infraestrutura de mensageria.
+2.  **Integration Events (Kafka)**: 
+    - Gerenciados pelo `KafkaDomainEventDispatcher`, que escuta os eventos de domínio e os encaminha para o tópico `culto-updates`.
+    - Garante que sistemas externos recebam notificações sem sujar o código de domínio com bibliotecas Kafka.
+3.  **Real-time (WebSockets)**: O `CultoEventListener` captura eventos do Kafka e os transmite via WebSocket.
 
 ---
 

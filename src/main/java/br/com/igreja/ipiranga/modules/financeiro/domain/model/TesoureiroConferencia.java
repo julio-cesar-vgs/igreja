@@ -37,4 +37,14 @@ public class TesoureiroConferencia {
     private Long tesoureiroId;
 
     private BigDecimal totalConferido;
+
+    @Enumerated(EnumType.STRING)
+    private StatusConferencia status;
+
+    private BigDecimal diferenca;
+
+    public enum StatusConferencia {
+        CONFERIDO,
+        DIVERGENTE
+    }
 }

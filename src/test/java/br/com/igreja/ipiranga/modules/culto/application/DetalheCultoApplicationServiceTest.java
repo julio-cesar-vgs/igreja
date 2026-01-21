@@ -1,6 +1,7 @@
 package br.com.igreja.ipiranga.modules.culto.application;
 
 import br.com.igreja.ipiranga.modules.culto.application.dto.CultoDashboardDTO;
+import br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado;
 import br.com.igreja.ipiranga.modules.culto.domain.model.*;
 import br.com.igreja.ipiranga.modules.culto.domain.repository.*;
 import br.com.igreja.ipiranga.modules.financeiro.domain.model.Dizimo;
@@ -11,20 +12,19 @@ import br.com.igreja.ipiranga.modules.financeiro.domain.repository.OfertaReposit
 import br.com.igreja.ipiranga.modules.financeiro.domain.repository.TesoureiroConferenciaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,121 +39,148 @@ class DetalheCultoApplicationServiceTest {
     @Mock private PresbiteroRepository presbiteroRepository;
     @Mock private TesoureiroConferenciaRepository tesoureiroConferenciaRepository;
     @Mock private CultoRepository cultoRepository;
-    @Mock private KafkaTemplate<String, Object> kafkaTemplate;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private DetalheCultoApplicationService service;
 
     @Test
     void shouldAddLouvor() {
-        Louvor louvor = Louvor.builder().pessoaNome("Teste").build();
-        Louvor saved = Louvor.builder().id(1L).pessoaNome("Teste").build();
+        Culto culto = Culto.builder().id(1L).build();
+        Louvor louvor = Louvor.builder().pessoaNome("Teste").culto(culto).build();
+        Louvor saved = Louvor.builder().id(1L).pessoaNome("Teste").culto(culto).build();
 
         when(louvorRepository.save(any(Louvor.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         Louvor result = service.addLouvor(louvor);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "LOUVOR_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("LOUVOR", eventCaptor.getValue().getTipoItem());
+        assertEquals(1L, eventCaptor.getValue().getItemId());
     }
 
     @Test
     void shouldAddDizimo() {
-        Dizimo dizimo = Dizimo.builder().valor(BigDecimal.TEN).build();
-        Dizimo saved = Dizimo.builder().id(1L).valor(BigDecimal.TEN).build();
+        Culto culto = Culto.builder().id(1L).build();
+        Dizimo dizimo = Dizimo.builder().valor(BigDecimal.TEN).culto(culto).build();
+        Dizimo saved = Dizimo.builder().id(1L).valor(BigDecimal.TEN).culto(culto).build();
 
         when(dizimoRepository.save(any(Dizimo.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         Dizimo result = service.addDizimo(dizimo);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "DIZIMO_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("DIZIMO", eventCaptor.getValue().getTipoItem());
     }
 
     @Test
     void shouldAddOferta() {
-        Oferta oferta = Oferta.builder().valor(BigDecimal.TEN).build();
-        Oferta saved = Oferta.builder().id(1L).valor(BigDecimal.TEN).build();
+        Culto culto = Culto.builder().id(1L).build();
+        Oferta oferta = Oferta.builder().valor(BigDecimal.TEN).culto(culto).build();
+        Oferta saved = Oferta.builder().id(1L).valor(BigDecimal.TEN).culto(culto).build();
 
         when(ofertaRepository.save(any(Oferta.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         Oferta result = service.addOferta(oferta);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "OFERTA_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("OFERTA", eventCaptor.getValue().getTipoItem());
     }
 
     @Test
     void shouldAddCooperador() {
-        Cooperador cooperador = Cooperador.builder().nome("Teste").build();
-        Cooperador saved = Cooperador.builder().id(1L).nome("Teste").build();
+        Culto culto = Culto.builder().id(1L).build();
+        Cooperador cooperador = Cooperador.builder().nome("Teste").culto(culto).build();
+        Cooperador saved = Cooperador.builder().id(1L).nome("Teste").culto(culto).build();
 
         when(cooperadorRepository.save(any(Cooperador.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         Cooperador result = service.addCooperador(cooperador);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "COOPERADOR_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("COOPERADOR", eventCaptor.getValue().getTipoItem());
     }
 
     @Test
     void shouldAddMusico() {
-        Musico musico = Musico.builder().nome("Teste").build();
-        Musico saved = Musico.builder().id(1L).nome("Teste").build();
+        Culto culto = Culto.builder().id(1L).build();
+        Musico musico = Musico.builder().nome("Teste").culto(culto).build();
+        Musico saved = Musico.builder().id(1L).nome("Teste").culto(culto).build();
 
         when(musicoRepository.save(any(Musico.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         Musico result = service.addMusico(musico);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "MUSICO_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("MUSICO", eventCaptor.getValue().getTipoItem());
     }
 
     @Test
     void shouldAddVisitante() {
-        Visitante visitante = Visitante.builder().nome("Teste").build();
-        Visitante saved = Visitante.builder().id(1L).nome("Teste").build();
+        Culto culto = Culto.builder().id(1L).build();
+        Visitante visitante = Visitante.builder().nome("Teste").culto(culto).build();
+        Visitante saved = Visitante.builder().id(1L).nome("Teste").culto(culto).build();
 
         when(visitanteRepository.save(any(Visitante.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         Visitante result = service.addVisitante(visitante);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "VISITANTE_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("VISITANTE", eventCaptor.getValue().getTipoItem());
     }
 
     @Test
     void shouldAddPresbitero() {
-        Presbitero presbitero = Presbitero.builder().nome("Teste").build();
-        Presbitero saved = Presbitero.builder().id(1L).nome("Teste").build();
+        Culto culto = Culto.builder().id(1L).build();
+        Presbitero presbitero = Presbitero.builder().nome("Teste").culto(culto).build();
+        Presbitero saved = Presbitero.builder().id(1L).nome("Teste").culto(culto).build();
 
         when(presbiteroRepository.save(any(Presbitero.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         Presbitero result = service.addPresbitero(presbitero);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "PRESBITERO_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("PRESBITERO", eventCaptor.getValue().getTipoItem());
     }
 
     @Test
     void shouldAddConferencia() {
-        TesoureiroConferencia conferencia = TesoureiroConferencia.builder().build();
-        TesoureiroConferencia saved = TesoureiroConferencia.builder().id(1L).build();
+        Culto culto = Culto.builder().id(1L).build();
+        TesoureiroConferencia conferencia = TesoureiroConferencia.builder().culto(culto).totalConferido(BigDecimal.ZERO).build();
+        TesoureiroConferencia saved = TesoureiroConferencia.builder().id(1L).culto(culto).totalConferido(BigDecimal.ZERO).build();
 
+        when(dizimoRepository.findByCultoId(1L)).thenReturn(Collections.emptyList());
+        when(ofertaRepository.findByCultoId(1L)).thenReturn(Collections.emptyList());
         when(tesoureiroConferenciaRepository.save(any(TesoureiroConferencia.class))).thenReturn(saved);
-        when(kafkaTemplate.send(anyString(), any())).thenReturn(CompletableFuture.completedFuture(null));
 
         TesoureiroConferencia result = service.addConferencia(conferencia);
 
         assertEquals(1L, result.getId());
-        verify(kafkaTemplate).send("culto-updates", "CONFERENCIA_ADDED:1");
+        
+        ArgumentCaptor<ItemCultoAdicionado> eventCaptor = ArgumentCaptor.forClass(ItemCultoAdicionado.class);
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        assertEquals("CONFERENCIA", eventCaptor.getValue().getTipoItem());
     }
 
     @Test

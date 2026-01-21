@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -29,13 +29,13 @@ class IgrejaControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private IgrejaApplicationService service;
 
-    @MockBean
+    @MockitoBean
     private JwtService jwtService;
 
-    @MockBean
+    @MockitoBean
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -75,8 +75,8 @@ class IgrejaControllerTest {
         when(service.save(any(Igreja.class))).thenReturn(savedIgreja);
 
         mockMvc.perform(post("/api/igrejas")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(igreja)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(igreja)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andExpect(jsonPath("$.id").value(3))
@@ -91,8 +91,8 @@ class IgrejaControllerTest {
         when(service.save(any(Igreja.class))).thenReturn(updatedIgreja);
 
         mockMvc.perform(put("/api/igrejas/2")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(igreja)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(igreja)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.nome").value("Filial Updated"));

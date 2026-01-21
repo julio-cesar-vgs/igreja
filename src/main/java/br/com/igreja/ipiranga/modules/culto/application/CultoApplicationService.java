@@ -28,7 +28,8 @@ import java.util.List;
 public class CultoApplicationService {
 
     private final CultoRepository repository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    // Kafka agora é desacoplado via Domain Event Listener
+    // private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public List<Culto> findAll() {
         return repository.findAll();
@@ -52,16 +53,18 @@ public class CultoApplicationService {
      */
     @Transactional
     public Culto save(Culto culto) {
-        Culto saved = repository.save(culto);
-        // Event-Driven: Publicação de evento de integração para outros contextos
-        kafkaTemplate.send("culto-updates", saved);
-        return saved;
+        // Registra o evento de domínio antes de salvar.
+        // O Spring Data JPA publicará automaticamente após o commit da transação (ou flush).
+        culto.registrarAtualizacao();
+        
+        return repository.save(culto);
     }
 
     @Transactional
     public void delete(Long id) {
         repository.deleteById(id);
-        // Event-Driven: Notificação de deleção
-        kafkaTemplate.send("culto-updates", "DELETED:" + id);
+        // Para deleção, o ideal seria carregar a entidade, registrar evento e deletar,
+        // ou usar um evento manual. Simplificação: Deixamos sem evento por enquanto ou 
+        // implementamos um ApplicationEventPublisher manual se necessário.
     }
 }

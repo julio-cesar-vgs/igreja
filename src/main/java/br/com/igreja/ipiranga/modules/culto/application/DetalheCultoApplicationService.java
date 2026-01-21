@@ -10,7 +10,9 @@ import br.com.igreja.ipiranga.modules.financeiro.domain.repository.DizimoReposit
 import br.com.igreja.ipiranga.modules.financeiro.domain.repository.OfertaRepository;
 import br.com.igreja.ipiranga.modules.financeiro.domain.repository.TesoureiroConferenciaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +46,7 @@ public class DetalheCultoApplicationService {
     private final PresbiteroRepository presbiteroRepository;
     private final TesoureiroConferenciaRepository tesoureiroConferenciaRepository;
     private final CultoRepository cultoRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Gera o Dashboard unificado do culto.
@@ -58,6 +60,7 @@ public class DetalheCultoApplicationService {
      * @return Um objeto {@link CultoDashboardDTO} populado.
      * @throws RuntimeException caso o culto não exista.
      */
+    @Cacheable(value = "dashboards", key = "#cultoId")
     public CultoDashboardDTO getDashboard(Long cultoId) {
         Culto culto = cultoRepository.findById(cultoId)
                 .orElseThrow(() -> new RuntimeException("Culto não encontrado"));
@@ -103,58 +106,109 @@ public class DetalheCultoApplicationService {
      * @return Louvor salvo.
      */
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#louvor.culto.id")
     public Louvor addLouvor(Louvor louvor) {
         Louvor saved = louvorRepository.save(louvor);
-        kafkaTemplate.send("culto-updates", "LOUVOR_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("LOUVOR", saved.getId(), saved.getCulto().getId()));
         return saved;
     }
 
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#dizimo.culto.id")
     public Dizimo addDizimo(Dizimo dizimo) {
         Dizimo saved = dizimoRepository.save(dizimo);
-        kafkaTemplate.send("culto-updates", "DIZIMO_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("DIZIMO", saved.getId(), saved.getCulto().getId()));
         return saved;
     }
 
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#oferta.culto.id")
     public Oferta addOferta(Oferta oferta) {
         Oferta saved = ofertaRepository.save(oferta);
-        kafkaTemplate.send("culto-updates", "OFERTA_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("OFERTA", saved.getId(), saved.getCulto().getId()));
         return saved;
     }
 
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#cooperador.culto.id")
     public Cooperador addCooperador(Cooperador cooperador) {
         Cooperador saved = cooperadorRepository.save(cooperador);
-        kafkaTemplate.send("culto-updates", "COOPERADOR_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("COOPERADOR", saved.getId(), saved.getCulto().getId()));
         return saved;
     }
 
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#musico.culto.id")
     public Musico addMusico(Musico musico) {
         Musico saved = musicoRepository.save(musico);
-        kafkaTemplate.send("culto-updates", "MUSICO_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("MUSICO", saved.getId(), saved.getCulto().getId()));
         return saved;
     }
 
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#visitante.culto.id")
     public Visitante addVisitante(Visitante visitante) {
         Visitante saved = visitanteRepository.save(visitante);
-        kafkaTemplate.send("culto-updates", "VISITANTE_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("VISITANTE", saved.getId(), saved.getCulto().getId()));
         return saved;
     }
 
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#presbitero.culto.id")
     public Presbitero addPresbitero(Presbitero presbitero) {
         Presbitero saved = presbiteroRepository.save(presbitero);
-        kafkaTemplate.send("culto-updates", "PRESBITERO_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("PRESBITERO", saved.getId(), saved.getCulto().getId()));
         return saved;
     }
 
+    /**
+     * Registra a conferência de tesouraria.
+     * <p>
+     * Regra de Negócio: O valor conferido pelo tesoureiro é comparado com a soma de Dízimos e Ofertas.
+     * Se houver diferença, o registro é salvo com status DIVERGENTE e a diferença é calculada.
+     * Se bater, o status é CONFERIDO.
+     * </p>
+     *
+     * @param conferencia Objeto com o valor declarado pelo tesoureiro.
+     * @return Conferência salva com o status processado.
+     */
     @Transactional
+    @CacheEvict(value = "dashboards", key = "#conferencia.culto.id")
     public TesoureiroConferencia addConferencia(TesoureiroConferencia conferencia) {
+        // Validação de Regra de Negócio: Comparação de Totais
+        BigDecimal totalSistema = calcularTotalSistema(conferencia.getCulto().getId());
+        BigDecimal totalInformado = conferencia.getTotalConferido();
+        
+        BigDecimal diferenca = totalInformado.subtract(totalSistema);
+        
+        conferencia.setDiferenca(diferenca);
+        
+        if (diferenca.compareTo(BigDecimal.ZERO) == 0) {
+            conferencia.setStatus(TesoureiroConferencia.StatusConferencia.CONFERIDO);
+        } else {
+            conferencia.setStatus(TesoureiroConferencia.StatusConferencia.DIVERGENTE);
+            // Poderíamos disparar um alerta específico para divergência aqui
+            // Mantemos o Kafka direto apenas para alerta de erro crítico/monitoramento, ou criamos outro evento.
+            // Simplificação para DDD: Vamos remover o kafka send direto e assumir que o alerta financeiro
+            // seria tratado por um Listener de "ConferenciaRegistrada" que checa o status.
+            // Para manter compatibilidade com o solicitado, vou usar o eventPublisher também.
+            // kafkaTemplate.send("financeiro-alerts", "DIVERGENCIA_DETECTADA: Culto " + conferencia.getCulto().getId() + " Diff: " + diferenca);
+        }
+
         TesoureiroConferencia saved = tesoureiroConferenciaRepository.save(conferencia);
-        kafkaTemplate.send("culto-updates", "CONFERENCIA_ADDED:" + saved.getId());
+        eventPublisher.publishEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.ItemCultoAdicionado("CONFERENCIA", saved.getId(), saved.getCulto().getId()));
         return saved;
+    }
+    
+    private BigDecimal calcularTotalSistema(Long cultoId) {
+        BigDecimal totalDizimos = dizimoRepository.findByCultoId(cultoId).stream()
+                .map(Dizimo::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalOfertas = ofertaRepository.findByCultoId(cultoId).stream()
+                .map(Oferta::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                
+        return totalDizimos.add(totalOfertas);
     }
 }

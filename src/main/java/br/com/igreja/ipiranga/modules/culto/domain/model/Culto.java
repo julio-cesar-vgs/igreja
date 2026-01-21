@@ -54,4 +54,13 @@ public class Culto extends TenantEntity {
     public enum StatusCulto {
         EM_ANDAMENTO, FINALIZADO
     }
+
+    /**
+     * Método de conveniência para registrar atualização.
+     * Idealmente seria chamado em métodos de mudança de estado, mas como usamos anemismo (Setters),
+     * chamaremos manualmente no Service.
+     */
+    public void registrarAtualizacao() {
+        this.registerEvent(new br.com.igreja.ipiranga.modules.culto.domain.event.CultoAtualizado(this));
+    }
 }

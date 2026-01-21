@@ -39,4 +39,38 @@ public abstract class TenantEntity {
     @TenantId
     @Column(name = "igreja_id")
     private Long igrejaId;
+
+    /**
+     * Lista de eventos de domínio registrados por esta entidade.
+     * Marcado como @Transient para não ser persistido no banco.
+     */
+    @lombok.ToString.Exclude
+    @jakarta.persistence.Transient
+    private final java.util.List<DomainEvent> domainEvents = new java.util.ArrayList<>();
+
+    /**
+     * Registra um novo evento de domínio.
+     * @param event O evento a ser registrado.
+     */
+    protected void registerEvent(DomainEvent event) {
+        this.domainEvents.add(event);
+    }
+
+    /**
+     * Método utilizado pelo Spring Data para publicar eventos automaticamente após o save().
+     * @return Lista de eventos a serem publicados.
+     */
+    @org.springframework.data.domain.AfterDomainEventPublication
+    public void clearDomainEvents() {
+        this.domainEvents.clear();
+    }
+
+    /**
+     * Retorna os eventos registrados para publicação.
+     * Anotado com @DomainEvents para o Spring Data.
+     */
+    @org.springframework.data.domain.DomainEvents
+    public java.util.Collection<DomainEvent> domainEvents() {
+        return java.util.Collections.unmodifiableList(this.domainEvents);
+    }
 }
