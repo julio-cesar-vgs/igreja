@@ -3,6 +3,7 @@ package br.com.igreja.ipiranga.modules.culto.domain.model;
 import br.com.igreja.ipiranga.shared.domain.TenantEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class Culto extends TenantEntity {
 
     @Id
