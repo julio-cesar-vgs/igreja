@@ -1,8 +1,8 @@
 package br.com.igreja.ipiranga.modules.audit.infrastructure;
 
+import br.com.igreja.ipiranga.infrastructure.security.CustomUserDetails;
 import br.com.igreja.ipiranga.modules.audit.domain.model.LogCorrecao;
 import br.com.igreja.ipiranga.modules.audit.domain.repository.LogCorrecaoRepository;
-import br.com.igreja.ipiranga.infrastructure.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;

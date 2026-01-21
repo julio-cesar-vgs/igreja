@@ -3,12 +3,12 @@ package br.com.igreja.ipiranga.modules.culto.web;
 import br.com.igreja.ipiranga.modules.culto.application.DetalheCultoApplicationService;
 import br.com.igreja.ipiranga.modules.culto.application.dto.CultoDashboardDTO;
 import br.com.igreja.ipiranga.modules.culto.domain.model.*;
-import br.com.igreja.ipiranga.modules.financeiro.domain.model.*;
+import br.com.igreja.ipiranga.modules.financeiro.domain.model.Dizimo;
+import br.com.igreja.ipiranga.modules.financeiro.domain.model.Oferta;
+import br.com.igreja.ipiranga.modules.financeiro.domain.model.TesoureiroConferencia;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Controller de Detalhes do Culto
