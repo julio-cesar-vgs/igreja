@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -43,8 +44,8 @@ class IgrejaControllerTest {
 
     @Test
     void shouldReturnAllIgrejas() throws Exception {
-        Igreja igreja1 = Igreja.builder().id(1L).nome("Matriz").tipo(Igreja.TipoIgreja.MATRIZ).build();
-        Igreja igreja2 = Igreja.builder().id(2L).nome("Filial 1").tipo(Igreja.TipoIgreja.FILIAL).build();
+        Igreja igreja1 = Igreja.builder().id(UUID.randomUUID()).nome("Matriz").tipo(Igreja.TipoIgreja.MATRIZ).build();
+        Igreja igreja2 = Igreja.builder().id(UUID.randomUUID()).nome("Filial 1").tipo(Igreja.TipoIgreja.FILIAL).build();
         List<Igreja> igrejas = Arrays.asList(igreja1, igreja2);
 
         when(service.findAll()).thenReturn(igrejas);
@@ -57,52 +58,56 @@ class IgrejaControllerTest {
 
     @Test
     void shouldReturnIgrejaById() throws Exception {
-        Igreja igreja = Igreja.builder().id(1L).nome("Matriz").tipo(Igreja.TipoIgreja.MATRIZ).build();
+        UUID id = UUID.randomUUID();
+        Igreja igreja = Igreja.builder().id(id).nome("Matriz").tipo(Igreja.TipoIgreja.MATRIZ).build();
 
-        when(service.findById(1L)).thenReturn(igreja);
+        when(service.findById(id)).thenReturn(igreja);
 
-        mockMvc.perform(get("/api/igrejas/1"))
+        mockMvc.perform(get("/api/igrejas/" + id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.nome").value("Matriz"));
     }
 
     @Test
     void shouldCreateIgreja() throws Exception {
+        UUID id = UUID.randomUUID();
         Igreja igreja = Igreja.builder().nome("Nova Filial").tipo(Igreja.TipoIgreja.FILIAL).build();
-        Igreja savedIgreja = Igreja.builder().id(3L).nome("Nova Filial").tipo(Igreja.TipoIgreja.FILIAL).build();
+        Igreja savedIgreja = Igreja.builder().id(id).nome("Nova Filial").tipo(Igreja.TipoIgreja.FILIAL).build();
 
         when(service.save(any(Igreja.class))).thenReturn(savedIgreja);
 
         mockMvc.perform(post("/api/igrejas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(igreja)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(igreja)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.id").value(3))
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.nome").value("Nova Filial"));
     }
 
     @Test
     void shouldUpdateIgreja() throws Exception {
+        UUID id = UUID.randomUUID();
         Igreja igreja = Igreja.builder().nome("Filial Updated").tipo(Igreja.TipoIgreja.FILIAL).build();
-        Igreja updatedIgreja = Igreja.builder().id(2L).nome("Filial Updated").tipo(Igreja.TipoIgreja.FILIAL).build();
+        Igreja updatedIgreja = Igreja.builder().id(id).nome("Filial Updated").tipo(Igreja.TipoIgreja.FILIAL).build();
 
         when(service.save(any(Igreja.class))).thenReturn(updatedIgreja);
 
-        mockMvc.perform(put("/api/igrejas/2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(igreja)))
+        mockMvc.perform(put("/api/igrejas/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(igreja)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.nome").value("Filial Updated"));
     }
 
     @Test
     void shouldDeleteIgreja() throws Exception {
-        doNothing().when(service).delete(1L);
+        UUID id = UUID.randomUUID();
+        doNothing().when(service).delete(id);
 
-        mockMvc.perform(delete("/api/igrejas/1"))
+        mockMvc.perform(delete("/api/igrejas/" + id))
                 .andExpect(status().isNoContent());
     }
 }

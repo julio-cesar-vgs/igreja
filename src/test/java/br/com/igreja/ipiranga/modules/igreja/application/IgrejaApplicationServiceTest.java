@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ class IgrejaApplicationServiceTest {
 
     @Test
     void shouldFindAll() {
-        Igreja igreja1 = Igreja.builder().id(1L).build();
+        Igreja igreja1 = Igreja.builder().id(UUID.randomUUID()).build();
         when(repository.findAll()).thenReturn(Arrays.asList(igreja1));
 
         List<Igreja> result = service.findAll();
@@ -37,28 +38,31 @@ class IgrejaApplicationServiceTest {
 
     @Test
     void shouldFindById() {
-        Igreja igreja = Igreja.builder().id(1L).build();
-        when(repository.findById(1L)).thenReturn(Optional.of(igreja));
+        UUID id = UUID.randomUUID();
+        Igreja igreja = Igreja.builder().id(id).build();
+        when(repository.findById(id)).thenReturn(Optional.of(igreja));
 
-        Igreja result = service.findById(1L);
+        Igreja result = service.findById(id);
         assertNotNull(result);
-        assertEquals(1L, result.getId());
+        assertEquals(id, result.getId());
     }
 
     @Test
     void shouldSave() {
+        UUID id = UUID.randomUUID();
         Igreja igreja = Igreja.builder().nome("Nova").build();
-        Igreja saved = Igreja.builder().id(1L).nome("Nova").build();
+        Igreja saved = Igreja.builder().id(id).nome("Nova").build();
         when(repository.save(any(Igreja.class))).thenReturn(saved);
 
         Igreja result = service.save(igreja);
-        assertEquals(1L, result.getId());
+        assertEquals(id, result.getId());
     }
 
     @Test
     void shouldDelete() {
-        doNothing().when(repository).deleteById(1L);
-        service.delete(1L);
-        verify(repository, times(1)).deleteById(1L);
+        UUID id = UUID.randomUUID();
+        doNothing().when(repository).deleteById(id);
+        service.delete(id);
+        verify(repository, times(1)).deleteById(id);
     }
 }
