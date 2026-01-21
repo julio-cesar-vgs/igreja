@@ -7,13 +7,13 @@ import br.com.igreja.ipiranga.modules.identity.application.dto.LoginRequest;
 import br.com.igreja.ipiranga.modules.identity.application.dto.RegisterRequest;
 import br.com.igreja.ipiranga.modules.identity.domain.model.Usuario;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 

@@ -2,7 +2,9 @@ package br.com.igreja.ipiranga.modules.culto.application;
 
 import br.com.igreja.ipiranga.modules.culto.domain.model.Louvor;
 import br.com.igreja.ipiranga.modules.culto.domain.repository.*;
-import br.com.igreja.ipiranga.modules.financeiro.domain.repository.*;
+import br.com.igreja.ipiranga.modules.financeiro.domain.repository.DizimoRepository;
+import br.com.igreja.ipiranga.modules.financeiro.domain.repository.OfertaRepository;
+import br.com.igreja.ipiranga.modules.financeiro.domain.repository.TesoureiroConferenciaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

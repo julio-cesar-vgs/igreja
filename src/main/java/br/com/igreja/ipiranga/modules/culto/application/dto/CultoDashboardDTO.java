@@ -1,7 +1,9 @@
 package br.com.igreja.ipiranga.modules.culto.application.dto;
 
 import br.com.igreja.ipiranga.modules.culto.domain.model.*;
-import br.com.igreja.ipiranga.modules.financeiro.domain.model.*;
+import br.com.igreja.ipiranga.modules.financeiro.domain.model.Dizimo;
+import br.com.igreja.ipiranga.modules.financeiro.domain.model.Oferta;
+import br.com.igreja.ipiranga.modules.financeiro.domain.model.TesoureiroConferencia;
 import lombok.Builder;
 import lombok.Data;
 

@@ -3,7 +3,6 @@ package br.com.igreja.ipiranga.modules.identity.domain.model;
 import br.com.igreja.ipiranga.modules.igreja.domain.model.Igreja;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.List;
