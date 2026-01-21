@@ -11,15 +11,21 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * DTO (Data Transfer Object) para o Dashboard Consolidado do Culto.
- * Camada: Application
- * 
- * Agrega informações de múltiplos contextos (Culto e Financeiro) para visualização em uma única tela.
- * Evita múltiplas requisições do frontend, fornecendo todos os dados necessários de uma só vez.
+ * DTO (Objeto de Transferência de Dados) rico que consolida toda a visão operacional de um culto.
+ * <p>
+ * Projetado para otimizar o carregamento de dados no frontend, evitando o problema de "N+1 request"
+ * onde a UI precisaria chamar endpoints separados para louvores, ofertas, dízimos, etc.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Data
 @Builder
 public class CultoDashboardDTO {
+    /**
+     * Objeto raiz com dados básicos do culto (Data, Tema, Dirigentes).
+     */
     private Culto culto;
     private List<Louvor> louvores;
     private List<Cooperador> cooperadores;
@@ -30,8 +36,19 @@ public class CultoDashboardDTO {
     // Financeiro
     private List<Dizimo> dizimos;
     private List<Oferta> ofertas;
+    /**
+     * Valor total somado de todos os dízimos lançados.
+     */
     private BigDecimal totalDizimos;
+
+    /**
+     * Valor total somado de todas as ofertas lançadas.
+     */
     private BigDecimal totalOfertas;
+
+    /**
+     * Valor total geral arrecadado (Dízimos + Ofertas).
+     */
     private BigDecimal totalGeral;
     
     // Contagens

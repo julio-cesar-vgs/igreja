@@ -7,11 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entidade de Domínio: Louvor
- * Camada: Domain
- * 
- * Representa um momento de louvor ou hino cantado durante o culto.
- * Faz parte do Agregado Culto, mas é persistido em sua própria tabela.
+ * Entidade que representa um hino, corinho ou oportunidade de louvor concedida durante o culto.
+ * <p>
+ * Registra quem cantou e, opcionalmente, qual hino foi entoado.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "louvores")

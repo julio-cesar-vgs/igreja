@@ -4,13 +4,13 @@ import br.com.igreja.ipiranga.modules.audit.domain.model.LogCorrecao;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Repositório para Logs de Auditoria.
- * Camada: Domain
- * 
- * Interface que estende JpaRepository para fornecer operações de CRUD
- * para a entidade LogCorrecao.
- * 
- * Utilizado principalmente pelo AuditAspect para persistir os logs gerados automaticamente.
+ * Interface de Repositório JPA para persistência de logs de auditoria.
+ * <p>
+ * Geralmente usado apenas para inserção (logs são write-once) e consultas de relatórios.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 public interface LogCorrecaoRepository extends JpaRepository<LogCorrecao, Long> {
 }

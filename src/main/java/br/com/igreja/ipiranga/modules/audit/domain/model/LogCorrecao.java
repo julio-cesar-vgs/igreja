@@ -9,15 +9,17 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * Entidade de Domínio: LogCorrecao
- * Camada: Domain
- * Contexto: Audit
- * 
- * Registra trilhas de auditoria para alterações em entidades do sistema.
- * Esta entidade é fundamental para rastreabilidade e segurança, armazenando
- * o estado anterior e o novo estado das entidades modificadas.
+ * Entidade responsável por registrar a trilha de auditoria (Audit Trail) de alterações de dados.
  * <p>
- * Consumido por: AuditAspect (via AOP)
+ * O objetivo é fornecer responsabilidade (accountability) e rastreabilidade sobre quem fez o que e quando.
+ * Esta tabela crescerá indefinidamente e pode servir para análise forense ou recuperação de erros operacionais.
+ * </p>
+ * <p>
+ * Consumido principalmente pelo Aspecto de Auditoria {@link br.com.igreja.ipiranga.modules.audit.infrastructure.AuditAspect}.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "logs_correcoes")

@@ -6,11 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repositório para Cooperadores.
- * Camada: Domain
- * 
- * Permite buscar cooperadores associados a um culto específico.
+ * Repositório de acesso a dados para a entidade {@link Cooperador}.
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 public interface CooperadorRepository extends JpaRepository<Cooperador, Long> {
+    /**
+     * Busca todos os cooperadores vinculados a um determinado culto.
+     *
+     * @param cultoId ID do culto.
+     * @return Lista de cooperadores.
+     */
     List<Cooperador> findByCultoId(Long cultoId);
 }

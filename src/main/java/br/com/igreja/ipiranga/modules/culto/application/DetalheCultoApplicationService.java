@@ -18,17 +18,18 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Service de Aplicação: DetalheCultoApplicationService
- * Camada: Application
- * 
- * Orquestra a adição de itens ao culto e a geração do dashboard.
- * Cruza informações dos contextos de Culto e Financeiro para fornecer uma visão unificada.
- * 
- * Responsabilidades:
- * - Adicionar detalhes ao culto (Louvores, Músicos, etc.).
- * - Registrar entradas financeiras (Dízimos, Ofertas) associadas ao culto.
- * - Gerar o DTO de Dashboard consolidando todas as informações.
- * - Publicar eventos de atualização via Kafka para notificações em tempo real.
+ * Serviço de Aplicação especializado na gestão dos detalhes e itens que compõem um culto.
+ * <p>
+ * Enquanto o {@link CultoApplicationService} cuida do cabeçalho do evento (data, horário, tema),
+ * este serviço cuida do conteúdo: quem cantou, quem tocou, quanto foi arrecadado, quem visitou.
+ * </p>
+ * <p>
+ * Atua como um Facade que orquestra chamadas para múltiplos repositórios (Culto, Financeiro, Pessoas)
+ * e consolida essas informações (Pattern Aggregator) para consumo do front-end.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Service
 @RequiredArgsConstructor
@@ -46,8 +47,16 @@ public class DetalheCultoApplicationService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     /**
-     * Consolida todas as informações de um culto em um único DTO.
-     * Realiza múltiplas consultas aos repositórios e cálculos de totais financeiros.
+     * Gera o Dashboard unificado do culto.
+     * <p>
+     * Este método é intensivo em leitura, agregando dados de 9 (nove) repositórios diferentes
+     * para montar uma visão completa do estado atual do culto.
+     * Realiza também os cálculos sumarizados de totais financeiros (Dízimos + Ofertas).
+     * </p>
+     *
+     * @param cultoId O ID do culto para o qual o dashboard será gerado.
+     * @return Um objeto {@link CultoDashboardDTO} populado.
+     * @throws RuntimeException caso o culto não exista.
      */
     public CultoDashboardDTO getDashboard(Long cultoId) {
         Culto culto = cultoRepository.findById(cultoId)
@@ -87,6 +96,12 @@ public class DetalheCultoApplicationService {
                 .build();
     }
 
+    /**
+     * Registra um novo louvor no culto.
+     *
+     * @param louvor Entidade contendo nome do cantor e hino.
+     * @return Louvor salvo.
+     */
     @Transactional
     public Louvor addLouvor(Louvor louvor) {
         Louvor saved = louvorRepository.save(louvor);

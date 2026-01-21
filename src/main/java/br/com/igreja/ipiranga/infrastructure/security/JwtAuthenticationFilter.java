@@ -18,11 +18,22 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * Filtro de Autenticação JWT.
- * Camada: Infrastructure
- * 
- * Intercepta todas as requisições HTTP para validar o token JWT no cabeçalho Authorization.
- * Responsável por extrair o tenant_id e configurar o contexto de segurança e do tenant.
+ * Filtro de segurança que intercepta todas as requisições HTTP para autenticação via JWT.
+ * <p>
+ * Este filtro é executado uma vez por requisição (OncePerRequestFilter) e realiza as seguintes operações:
+ * <ol>
+ *     <li>Verifica a presença do cabeçalho 'Authorization' com o prefixo 'Bearer '.</li>
+ *     <li>Extrai e valida o token JWT.</li>
+ *     <li>Carrega os detalhes do usuário associado ao token.</li>
+ *     <li>Estabelece o contexto de segurança do Spring (SecurityContext).</li>
+ *     <li>Define o contexto de tenant (Igreja) para a thread atual, permitindo isolamento de dados.</li>
+ * </ol>
+ * Caso o token token seja inválido ou inexistente, a requisição segue o fluxo sem autenticação
+ * (que poderá ser barrada posteriormente pelo SecurityFilterChain se o endpoint for protegido).
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Component
 @RequiredArgsConstructor
@@ -31,6 +42,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+    /**
+     * Lógica principal do filtro de autenticação.
+     *
+     * @param request A requisição HTTP recebida.
+     * @param response A resposta HTTP sendo construída.
+     * @param filterChain A cadeia de filtros do Spring Security.
+     * @throws ServletException Em caso de erros de servlet.
+     * @throws IOException Em caso de erros de I/O.
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,

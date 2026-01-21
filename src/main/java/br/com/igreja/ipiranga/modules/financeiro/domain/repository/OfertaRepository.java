@@ -6,9 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repositório para Ofertas.
- * Camada: Domain
+ * Repositório para gerenciamento da entidade {@link Oferta}.
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 public interface OfertaRepository extends JpaRepository<Oferta, Long> {
+    /**
+     * Lista as ofertas arrecadadas em um determinado culto.
+     *
+     * @param cultoId ID do culto.
+     * @return Lista de ofertas.
+     */
     List<Oferta> findByCultoId(Long cultoId);
 }

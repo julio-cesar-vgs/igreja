@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller REST: AuthenticationController
- * Camada: Web
- * 
- * Endpoints públicos para autenticação e registro de usuários.
- * Permite que novos usuários se cadastrem e que usuários existentes obtenham tokens JWT para acesso.
+ * Controlador REST para gerenciamento de identidade.
+ * <p>
+ * Expõe endpoints públicos para que usuários possam se registrar e realizar login.
+ * Esta é a porta de entrada para a obtenção do token Bearer necessário para acessar
+ * os demais recursos da API.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @RestController
 @RequestMapping("/auth")
@@ -29,12 +33,24 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
+    /**
+     * Endpoint para cadastro de novos usuários.
+     *
+     * @param request Objeto JSON contendo nome, email, senha, igrejaId e role.
+     * @return ResponseEntity contendo o token de acesso gerado e status HTTP 200 (OK).
+     */
     @PostMapping("/register")
     @Operation(summary = "Registrar um novo usuário", description = "Cria um novo usuário e retorna o token JWT")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
     }
 
+    /**
+     * Endpoint para autenticação (Login).
+     *
+     * @param request Objeto JSON contendo email e senha.
+     * @return ResponseEntity contendo o token de acesso gerado e status HTTP 200 (OK).
+     */
     @PostMapping("/login")
     @Operation(summary = "Autenticar usuário", description = "Valida as credenciais e retorna o token JWT")
     public ResponseEntity<AuthResponse> authenticate(@Valid @RequestBody LoginRequest request) {

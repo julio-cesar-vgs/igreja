@@ -7,11 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entidade de Domínio: Cooperador
- * Camada: Domain
- * 
- * Representa um cooperador que auxiliou no culto.
- * Pode incluir informações sobre o cargo ou função específica exercida.
+ * Entidade que representa um Cooperador (obreiro) escalado ou participante do culto.
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "cooperadores")

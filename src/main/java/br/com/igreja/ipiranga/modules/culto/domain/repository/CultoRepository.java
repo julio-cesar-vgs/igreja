@@ -4,11 +4,13 @@ import br.com.igreja.ipiranga.modules.culto.domain.model.Culto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Interface de Repositório para o Agregado Culto.
- * Camada: Domain (Contrato)
- * 
- * Define as operações de persistência disponíveis para a entidade Culto.
- * A implementação é fornecida automaticamente pelo Spring Data JPA.
+ * Repositório principal para a entidade {@link Culto}.
+ * <p>
+ * Fornece os métodos CRUD padrão para a raiz do agregado.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 public interface CultoRepository extends JpaRepository<Culto, Long> {
 }

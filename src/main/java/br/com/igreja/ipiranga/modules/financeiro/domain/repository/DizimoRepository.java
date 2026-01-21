@@ -6,9 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repositório para Dízimos.
- * Camada: Domain
+ * Repositório para gerenciamento da entidade {@link Dizimo}.
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 public interface DizimoRepository extends JpaRepository<Dizimo, Long> {
+    /**
+     * Lista os dízimos associados a um determinado culto.
+     *
+     * @param cultoId ID do culto.
+     * @return Lista de dízimos.
+     */
     List<Dizimo> findByCultoId(Long cultoId);
 }

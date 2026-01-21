@@ -16,14 +16,18 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Entidade de Domínio: Usuario
- * Camada: Domain
- * Contexto: Identity (Identidade e Acesso)
- * 
- * Representa um usuário do sistema, com credenciais de acesso e perfil de permissão.
- * Implementa UserDetails para integração direta com o Spring Security.
- * 
- * Herda de TenantEntity, vinculando o usuário a uma igreja específica (Multi-tenancy).
+ * Entidade que representa um Usuário do sistema.
+ * <p>
+ * O Usuário é a raiz de identidade dentro do sistema, utilizado para controle de acesso (login)
+ * e auditoria. Implementa {@link UserDetails} para integração nativa com o Spring Security.
+ * </p>
+ * <p>
+ * A classe estende {@link TenantEntity}, o que significa que cada usuário pertence estritamente
+ * a uma única igreja (IgrejaId), garantindo o isolamento multilocatário.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "usuarios")

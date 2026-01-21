@@ -11,15 +11,17 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 
 /**
- * Entidade de Domínio: Culto
- * Camada: Domain
- * Padrão DDD: Aggregate Root (Raiz de Agregado)
- * 
- * Representa um evento de culto realizado pela igreja.
- * Este é o centro do contexto de Culto. Todas as operações relacionadas ao culto
- * (como adicionar louvores, registrar ofertas) são logicamente agrupadas em torno deste agregado.
- * 
- * Herda de TenantEntity para garantir o isolamento dos dados por igreja (Multi-tenancy).
+ * Entidade Raiz de Agregado (Aggregate Root) que representa um Culto Oficial.
+ * <p>
+ * O Culto é o evento central da igreja e esta entidade agrupa todas as informações relacionadas a ele,
+ * servindo como ponto de entrada para consistência transacional do agregado.
+ * </p>
+ * <p>
+ * Herda de {@link TenantEntity} para garantir isolamento por filial/igreja.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "cultos")

@@ -10,9 +10,14 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * Entidade de Domínio: Oferta
- * Camada: Domain
- * Contexto: Financeiro
+ * Entidade que representa uma Oferta.
+ * <p>
+ * Diferente do dízimo, a oferta geralmente é anônima (embora no modelo atual não tenhamos campo de nome, o contexto e uso são distintos).
+ * Registra entradas financeiras esporádicas arrecadadas durante um culto.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "ofertas")

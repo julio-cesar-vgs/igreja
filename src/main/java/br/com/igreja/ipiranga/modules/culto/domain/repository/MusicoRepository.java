@@ -6,11 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repositório para Músicos.
- * Camada: Domain
- * <p>
- * Permite buscar músicos associados a um culto específico.
+ * Repositório de acesso a dados para a entidade {@link Musico}.
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 public interface MusicoRepository extends JpaRepository<Musico, Long> {
+    /**
+     * Recupera a lista de músicos que participaram de um culto.
+     *
+     * @param cultoId ID do culto.
+     * @return Lista de musicos.
+     */
     List<Musico> findByCultoId(Long cultoId);
 }

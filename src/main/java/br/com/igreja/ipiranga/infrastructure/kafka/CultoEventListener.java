@@ -7,11 +7,15 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * Listener de Eventos do Kafka para o contexto de Culto.
- * Camada: Infrastructure
+ * Componente Listener para eventos de domínio do contexto de Culto via Apache Kafka.
  * <p>
- * Escuta o tópico "culto-updates" e encaminha as notificações para os
- * clientes conectados via WebSocket (STOMP), permitindo atualizações em tempo real.
+ * Este listener atua como uma ponte entre o barramento de eventos assíncrono (Kafka)
+ * e os clientes conectados via WebSocket. Quando uma alteração ocorre no culto (ex: hino adicionado),
+ * um evento é recebido aqui e propagado em tempo real para os dashboards frontend.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Component
 @RequiredArgsConstructor
@@ -20,6 +24,14 @@ public class CultoEventListener {
 
     private final SimpMessagingTemplate messagingTemplate;
 
+    /**
+     * Método tratador de mensagens do tópico "culto-updates".
+     * <p>
+     * Recebe o evento deserializado, loga a ocorrência e o retransmite para o tópico WebSocket "/topic/cultos".
+     * </p>
+     *
+     * @param event O objeto de evento recebido da fila (convertido automaticamente via JSON message converter).
+     */
     @KafkaListener(topics = "culto-updates", groupId = "igreja-group")
     public void handleCultoUpdate(Object event) {
         log.info("Received culto update: {}", event);

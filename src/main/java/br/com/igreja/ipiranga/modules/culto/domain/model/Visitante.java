@@ -7,11 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entidade de Domínio: Visitante
- * Camada: Domain
- * 
- * Representa um visitante presente no culto.
- * Importante para o acolhimento e acompanhamento de novos membros.
+ * Entidade que registra os dados de um Visitante pela primeira vez no culto (ou recorrente).
+ * <p>
+ * Serve para fins de boas-vindas e estatísticas de evangelismo.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "visitantes")

@@ -7,11 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entidade de Domínio: Musico
- * Camada: Domain
- * 
- * Representa um músico que participou do culto.
- * Utilizado para registro de escala e participação.
+ * Entidade que identifica um Músico (organista, violinista, etc) presente no culto.
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "musicos")

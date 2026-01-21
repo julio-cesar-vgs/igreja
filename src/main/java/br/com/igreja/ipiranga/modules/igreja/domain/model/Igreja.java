@@ -7,13 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Entidade de Domínio: Igreja
- * Camada: Domain
- * Contexto: Cadastro / Configuração
- * 
- * Representa uma unidade física da organização (Matriz ou Filial).
- * Fundamental para o sistema Multi-tenant, pois cada registro de dados (Culto, Membro, Financeiro)
- * estará associado a uma instância desta entidade.
+ * Representa uma unidade física da organização religiosa (Igreja).
+ * <p>
+ * Esta entidade é o pilar central do sistema de Multi-tenancy. Cada registro no banco de dados
+ * (exceto tabelas de sistema) deve pertencer a uma Igreja.
+ * Pode ser do tipo MATRIZ (sede administrativa) ou FILIAL (congregações locais).
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "igrejas")

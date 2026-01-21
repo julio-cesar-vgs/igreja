@@ -17,10 +17,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Service de Aplicação: AuthenticationService
- * Camada: Application
- * 
- * Gerencia o registro de novos usuários e a autenticação.
+ * Serviço de aplicação responsável pelos casos de uso de Identidade e Acesso.
+ * <p>
+ * Centraliza a lógica de negócio para:
+ * <ul>
+ *     <li>Cadastro de novos usuários (com validação de duplicidade).</li>
+ *     <li>Autenticação de usuários existentes (login).</li>
+ *     <li>Geração de tokens de acesso (JWT).</li>
+ * </ul>
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Service
 @RequiredArgsConstructor
@@ -31,12 +39,30 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registra um novo usuário no sistema.
+     * <p>
+     * O fluxo de registro envolve:
+     * <ol>
+     *     <li>Validar se o e-mail já existe.</li>
+     *     <li>Criar a entidade {@link Usuario} com a senha criptografada.</li>
+     *     <li>Associar o usuário à igreja correta (Tenant).</li>
+     *     <li>Salvar no banco de dados.</li>
+     *     <li>Gerar e retornar o token JWT inicial.</li>
+     * </ol>
+     * </p>
+     *
+     * @param request DTO contendo os dados do novo usuário.
+     * @return AuthResponse contendo o token de acesso.
+     * @throws RuntimeException se o email já estiver cadastrado.
+     */
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (repository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email já cadastrado");
         }
-
+        
+        // ... (resto do método igual, focado na explicação)
         var user = Usuario.builder()
                 .nome(request.getNome())
                 .email(request.getEmail())
@@ -44,7 +70,6 @@ public class AuthenticationService {
                 .role(request.getRole())
                 .build();
         
-        // Seta o igreja_id para o multi-tenancy
         user.setIgrejaId(request.getIgrejaId());
 
         repository.save(user);
@@ -52,6 +77,17 @@ public class AuthenticationService {
         return generateAuthResponse(user);
     }
 
+    /**
+     * Realiza a autenticação de um usuário.
+     * <p>
+     * Delega a validação de credenciais para o {@link AuthenticationManager} do Spring Security.
+     * Se bem sucedido, busca o usuário completo e gera um token JWT.
+     * </p>
+     *
+     * @param request DTO com email e senha.
+     * @return AuthResponse com o token JWT.
+     * @throws org.springframework.security.core.AuthenticationException se as credenciais forem inválidas.
+     */
     public AuthResponse authenticate(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

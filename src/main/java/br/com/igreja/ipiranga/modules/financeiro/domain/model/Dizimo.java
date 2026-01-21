@@ -10,11 +10,34 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * Entidade de Domínio: Dizimo
- * Camada: Domain
- * Contexto: Financeiro
- * 
- * Representa uma contribuição financeira identificada.
+ * Entidade que representa um Dízimo.
+ * <p>
+ * O dízimo é uma contribuição financeira nominal (identificada).
+ * Esta entidade armazena o valor, o nome do dizimista e a qual culto esta contribuição se refere.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
+ */
+/**
+ * Entidade que representa uma Oferta.
+ * <p>
+ * Diferente do dízimo, a oferta geralmente é anônima (embora no modelo atual não tenhamos campo de nome, o contexto e uso são distintos).
+ * Registra entradas financeiras esporádicas arrecadadas durante um culto.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
+ */
+/**
+ * Entidade que registra a conferência financeira de um culto feira por um tesoureiro.
+ * <p>
+ * Serve como um mecanismo de controle e segurança ("quatro olhos"), onde um tesoureiro
+ * valida e assina digitalmente (pelo ID) o total arrecadado.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Entity
 @Table(name = "dizimos")

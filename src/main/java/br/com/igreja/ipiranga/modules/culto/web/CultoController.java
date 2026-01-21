@@ -9,18 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller de Culto
- * Camada: Interface (Web)
- * 
- * Expõe as funcionalidades do contexto de Culto para o mundo externo via REST.
- * Recebe requisições HTTP, valida dados básicos e delega o processamento para o CultoApplicationService.
- * 
- * Endpoints:
- * - GET /api/cultos: Lista todos os cultos.
- * - GET /api/cultos/{id}: Busca um culto por ID.
- * - POST /api/cultos: Cria um novo culto.
- * - PUT /api/cultos/{id}: Atualiza um culto existente.
- * - DELETE /api/cultos/{id}: Remove um culto.
+ * Controlador REST API para operações CRUD no recurso /api/cultos.
+ * <p>
+ * Ponto de entrada para criação e gerenciamento básico dos cultos.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @RestController
 @RequestMapping("/api/cultos")
@@ -29,6 +24,11 @@ public class CultoController {
 
     private final CultoApplicationService service;
 
+    /**
+     * Obtém a lista completa de cultos registrados.
+     *
+     * @return Lista de cultos.
+     */
     @GetMapping
     public ResponseEntity<List<Culto>> getAll() {
         return ResponseEntity.ok(service.findAll());

@@ -9,6 +9,16 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+/**
+ * Entidade que registra a conferência financeira de um culto feita por um tesoureiro.
+ * <p>
+ * Serve como um mecanismo de controle e segurança ("quatro olhos"), onde um tesoureiro
+ * valida e assina digitalmente (pelo ID) o total arrecadado.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
+ */
 @Entity
 @Table(name = "tesoureiro_conferencias")
 @Data

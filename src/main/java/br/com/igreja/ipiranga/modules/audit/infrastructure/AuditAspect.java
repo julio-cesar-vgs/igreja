@@ -15,18 +15,22 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 /**
- * Aspecto de Auditoria: AuditAspect
- * Camada: Infrastructure
- * 
- * Implementa a preocupação transversal (cross-cutting concern) de auditoria.
- * Utiliza AOP (Aspect Oriented Programming) para interceptar operações de escrita (save, delete)
- * nos serviços de aplicação e registrar logs automaticamente, sem poluir o código de negócio.
- * 
- * Como funciona:
- * 1. Define um Pointcut que identifica métodos 'save*' e 'delete*' nos ApplicationServices.
- * 2. Usa @AfterReturning para executar a lógica de log após o sucesso do método interceptado.
- * 3. Captura o usuário logado do SecurityContextHolder.
- * 4. Persiste um registro em LogCorrecaoRepository.
+ * Aspecto AOP (Aspect Oriented Programming) para automação de logs de auditoria.
+ * <p>
+ * Este componente intercepta chamadas de métodos nos Services de Aplicação, especificamente
+ * operações de escrita (save*, delete*), e gera registros na tabela de LogCorrecao automaticamente.
+ * </p>
+ * <p>
+ * Benefícios:
+ * <ul>
+ *     <li>Desacoplamento: O código de negócio não precisa saber que está sendo auditado.</li>
+ *     <li>Consistência: Garante que todas as operações mapeadas sejam auditadas sem esquecimento.</li>
+ *     <li>Manutenibilidade: Lógica de auditoria centralizada em um único lugar.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Aspect
 @Component
@@ -35,11 +39,26 @@ public class AuditAspect {
 
     private final LogCorrecaoRepository logRepository;
 
-    // Pointcut atualizado para os novos pacotes de módulos
+    /**
+     * Define o Pointcut (Ponto de Corte) para interceptação.
+     * <p>
+     * Alvo: Métodos que começam com 'save' ou 'delete'
+     * Localização: Qualquer classe terminada em 'Service' dentro de subpacotes 'application' do projeto base.
+     * </p>
+     */
     @Pointcut("execution(* br.com.igreja.ipiranga.modules..application.*Service.save*(..)) || " +
               "execution(* br.com.igreja.ipiranga.modules..application.*Service.delete*(..))")
     public void serviceWriteOperations() {}
 
+    /**
+     * Advice (Conselho) executado após o retorno bem-sucedido do método interceptado.
+     * <p>
+     * Captura o resultado da operação e o usuário autenticado para criar o registro de log.
+     * </p>
+     *
+     * @param joinPoint Metadados do ponto de junção (método interceptado).
+     * @param result O objeto retornado pelo método (entidade salva, por exemplo).
+     */
     @AfterReturning(pointcut = "serviceWriteOperations()", returning = "result")
     public void logAfterWrite(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().getName();

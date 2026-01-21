@@ -11,15 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Controller de Detalhes do Culto
- * Camada: Interface (Web)
- * 
- * Gerencia a inserção de itens específicos (louvores, ofertas, dízimos, pessoas) associados a um culto.
- * Atua como ponto de entrada para operações que enriquecem o agregado Culto com detalhes operacionais e financeiros.
- * 
- * Endpoints principais:
- * - GET /api/cultos/{cultoId}/dashboard: Retorna uma visão consolidada do culto.
- * - POST /api/cultos/{cultoId}/*: Adiciona itens específicos ao culto.
+ * Controlador REST API para gerenciamento dos itens detalhados de um culto específico.
+ * <p>
+ * Todos os endpoints aqui são sub-recursos de um culto, identificados path {@code /api/cultos/{cultoId}/...}.
+ * Permite adicionar louvores, ofertas, dízimos, músicos e obter o dashboard consolidado.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @RestController
 @RequestMapping("/api/cultos/{cultoId}")
@@ -28,12 +27,25 @@ public class DetalheCultoController {
 
     private final DetalheCultoApplicationService service;
 
+    /**
+     * Recupera o Dashboard completo com todos os dados do culto.
+     *
+     * @param cultoId ID do culto.
+     * @return DTO contendo louvores, finanças, pessoas, etc.
+     */
     @GetMapping("/dashboard")
     public ResponseEntity<CultoDashboardDTO> getDashboard(@PathVariable Long cultoId) {
         return ResponseEntity.ok(service.getDashboard(cultoId));
     }
 
     // Louvores
+    /**
+     * Adiciona um registro de louvor ao culto.
+     *
+     * @param cultoId ID do culto pai.
+     * @param louvor Dados do louvor.
+     * @return Louvor salvo.
+     */
     @PostMapping("/louvores")
     public ResponseEntity<Louvor> addLouvor(@PathVariable Long cultoId, @RequestBody Louvor louvor) {
         louvor.setCulto(Culto.builder().id(cultoId).build());

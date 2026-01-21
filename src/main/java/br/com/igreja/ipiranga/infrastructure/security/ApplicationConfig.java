@@ -14,11 +14,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Configuração de aplicação para Segurança.
- * Camada: Infrastructure
- * 
- * Define os beans necessários para autenticação e criptografia de senhas,
- * integrando o repositório de usuários com o Spring Security.
+ * Classe de configuração para Beans fundamentais da aplicação relacionados à segurança.
+ * <p>
+ * Define e expõe componentes do Spring Bean que serão reutilizados em diferentes partes da infraestrutura,
+ * como o gerenciador de autenticação e o codificador de senhas.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Configuration
 @RequiredArgsConstructor
@@ -26,6 +29,17 @@ public class ApplicationConfig {
 
     private final UsuarioRepository repository;
 
+    /**
+     * Define o serviço de busca de usuários para autenticação.
+     * <p>
+     * Este bean informa ao Spring Security como buscar os dados do usuário no banco de dados.
+     * Utiliza o {@link UsuarioRepository} para encontrar um usuário por e-mail e o adapta
+     * para um objeto {@link CustomUserDetails}.
+     * </p>
+     *
+     * @return Uma implementação funcional de UserDetailsService.
+     * @throws UsernameNotFoundException Se o usuário não for encontrado no banco.
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> repository.findByEmail(username)
@@ -46,6 +60,14 @@ public class ApplicationConfig {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Define o codificador de senhas da aplicação.
+     * <p>
+     * Utiliza o BCrypt, um algoritmo de hash robusto e padrão da indústria para armazenamento seguro de senhas.
+     * </p>
+     *
+     * @return Instância de BCryptPasswordEncoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

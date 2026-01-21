@@ -11,18 +11,14 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * Controller de Igreja
- * Camada: Interface (Web)
+ * Controlador REST para administração de Igrejas.
+ * <p>
+ * Fornece endpoints para CRUD completo das unidades (Matriz/Filiais).
+ * Geralmente restrito a usuários com perfil administrativo global.
+ * </p>
  *
- * Expõe as funcionalidades de cadastro e gestão de Igrejas (Matriz e Filiais).
- * Permite que administradores configurem a estrutura organizacional do sistema.
- * 
- * Endpoints:
- * - GET /api/igrejas: Lista todas as igrejas cadastradas.
- * - GET /api/igrejas/{id}: Busca detalhes de uma igreja.
- * - POST /api/igrejas: Cadastra uma nova igreja.
- * - PUT /api/igrejas/{id}: Atualiza dados de uma igreja.
- * - DELETE /api/igrejas/{id}: Remove uma igreja.
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @RestController
 @RequestMapping("/api/igrejas")
@@ -31,16 +27,33 @@ public class IgrejaController {
 
     private final IgrejaApplicationService service;
 
+    /**
+     * Recupera a lista de todas as igrejas.
+     *
+     * @return ResponseEntity com a lista de igrejas.
+     */
     @GetMapping
     public ResponseEntity<List<Igreja>> getAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
+    /**
+     * Busca os dados de uma igreja pelo ID.
+     *
+     * @param id ID da igreja.
+     * @return ResponseEntity com os dados da igreja.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Igreja> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    /**
+     * Cadastra uma nova igreja.
+     *
+     * @param igreja Objeto JSON com dados da nova igreja.
+     * @return ResponseEntity com status 201 Created e Location header.
+     */
     @PostMapping
     public ResponseEntity<Igreja> create(@RequestBody Igreja igreja) {
         Igreja saved = service.save(igreja);
@@ -51,12 +64,25 @@ public class IgrejaController {
         return ResponseEntity.created(location).body(saved);
     }
 
+    /**
+     * Atualiza os dados de uma igreja existente.
+     *
+     * @param id ID da igreja a atualizar.
+     * @param igreja Objeto JSON com os novos dados.
+     * @return ResponseEntity com a igreja atualizada.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Igreja> update(@PathVariable Long id, @RequestBody Igreja igreja) {
         igreja.setId(id);
         return ResponseEntity.ok(service.save(igreja));
     }
 
+    /**
+     * Exclui uma igreja.
+     *
+     * @param id ID da igreja a excluir.
+     * @return ResponseEntity sem conteúdo (204).
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);

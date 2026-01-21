@@ -10,16 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Service de Aplicação: CultoApplicationService
- * Camada: Application
- * 
- * Orquestra as operações de negócio para o contexto de Culto.
- * Esta camada é responsável por coordenar as tarefas e delegar a lógica para o domínio.
- * Também gerencia a publicação de eventos para o Kafka (Event-Driven).
- * 
- * Responsabilidades:
- * - CRUD de Cultos.
- * - Publicação de eventos de integração (culto-updates) para notificar outros sistemas ou componentes (ex: WebSocket).
+ * Serviço de aplicação principal para gestão do ciclo de vida dos Cultos.
+ * <p>
+ * Responsável pelas operações de cadastro, atualização e remoção de cultos, funcionando como
+ * a barreira transacional inicial.
+ * </p>
+ * <p>
+ * Integra-se com o Apache Kafka para emitir eventos de domínio (ex: "culto-criado", "culto-deletado"),
+ * permitindo que outros microserviços ou componentes (como WebSocket) reajam a essas mudanças.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,17 @@ public class CultoApplicationService {
                 .orElseThrow(() -> new RuntimeException("Culto não encontrado"));
     }
 
+    /**
+     * Salva ou atualiza um culto.
+     * <p>
+     * Se o culto já possuir ID, será uma atualização. Caso contrário, um insert.
+     * Após persistir com sucesso, envia uma mensagem para o tópico Kafka 'culto-updates',
+     * contendo o objeto salvo serializado.
+     * </p>
+     *
+     * @param culto A entidade a ser salva.
+     * @return O culto persistido e atualizado.
+     */
     @Transactional
     public Culto save(Culto culto) {
         Culto saved = repository.save(culto);

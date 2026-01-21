@@ -6,11 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 /**
- * Repositório para Visitantes.
- * Camada: Domain
- * 
- * Permite buscar visitantes associados a um culto específico.
+ * Repositório de acesso a dados para a entidade {@link Visitante}.
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 public interface VisitanteRepository extends JpaRepository<Visitante, Long> {
+    /**
+     * Lista os visitantes de um culto.
+     *
+     * @param cultoId ID do culto.
+     * @return Lista de visitantes.
+     */
     List<Visitante> findByCultoId(Long cultoId);
 }

@@ -11,15 +11,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuração do SpringDoc OpenAPI (Swagger).
- * Camada: Infrastructure
- * 
- * Define os metadados da documentação da API e configura o suporte global
- * para autenticação via JWT (Bearer Token) na interface visual do Swagger.
+ * Classe de configuração da documentação automática da API via SpringDoc OpenApi (Swagger 3).
+ * <p>
+ * Personaliza as informações gerais da API (título, descrição, versão) e define os esquemas de segurança,
+ * permitindo que o botão "Authorize" no Swagger UI funcione corretamente com tokens JWT Bearer.
+ * </p>
+ *
+ * @author Sistema Igreja
+ * @version 1.0
  */
 @Configuration
 public class OpenApiConfig {
 
+    /**
+     * Define o bean principal do OpenAPI com configurações personalizadas.
+     *
+     * @return Objeto OpenAPI contendo info e componentes de segurança configurados.
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
