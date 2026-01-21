@@ -6,6 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidade de Domínio: Presbitero
+ * Camada: Domain
+ * 
+ * Representa um presbítero presente ou atuante no culto.
+ */
 @Entity
 @Table(name = "presbiteros")
 @Data

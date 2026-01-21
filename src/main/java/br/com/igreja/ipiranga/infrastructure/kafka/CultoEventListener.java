@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * Listener de Eventos do Kafka para o contexto de Culto.
  * Camada: Infrastructure
- * 
+ * <p>
  * Escuta o tópico "culto-updates" e encaminha as notificações para os
  * clientes conectados via WebSocket (STOMP), permitindo atualizações em tempo real.
  */

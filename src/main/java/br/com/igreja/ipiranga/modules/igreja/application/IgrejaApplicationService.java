@@ -13,6 +13,7 @@ import java.util.List;
  * Camada: Application
  *
  * Gerencia as operações de negócio para o contexto de Igreja (Cadastro de Matriz e Filiais).
+ * Responsável por manter o cadastro das unidades que utilizarão o sistema.
  */
 @Service
 @RequiredArgsConstructor

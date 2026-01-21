@@ -19,6 +19,11 @@ import java.util.List;
  * Entidade de Domínio: Usuario
  * Camada: Domain
  * Contexto: Identity (Identidade e Acesso)
+ * 
+ * Representa um usuário do sistema, com credenciais de acesso e perfil de permissão.
+ * Implementa UserDetails para integração direta com o Spring Security.
+ * 
+ * Herda de TenantEntity, vinculando o usuário a uma igreja específica (Multi-tenancy).
  */
 @Entity
 @Table(name = "usuarios")

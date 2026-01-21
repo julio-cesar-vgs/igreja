@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller REST: AuthenticationController
  * Camada: Web
  * 
- * Endpoints para autenticação e registro de usuários.
+ * Endpoints públicos para autenticação e registro de usuários.
+ * Permite que novos usuários se cadastrem e que usuários existentes obtenham tokens JWT para acesso.
  */
 @RestController
 @RequestMapping("/auth")

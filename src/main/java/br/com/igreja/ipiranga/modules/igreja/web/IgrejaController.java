@@ -14,7 +14,15 @@ import java.util.List;
  * Controller de Igreja
  * Camada: Interface (Web)
  *
- * Expõe as funcionalidades de cadastro de Igrejas.
+ * Expõe as funcionalidades de cadastro e gestão de Igrejas (Matriz e Filiais).
+ * Permite que administradores configurem a estrutura organizacional do sistema.
+ * 
+ * Endpoints:
+ * - GET /api/igrejas: Lista todas as igrejas cadastradas.
+ * - GET /api/igrejas/{id}: Busca detalhes de uma igreja.
+ * - POST /api/igrejas: Cadastra uma nova igreja.
+ * - PUT /api/igrejas/{id}: Atualiza dados de uma igreja.
+ * - DELETE /api/igrejas/{id}: Remove uma igreja.
  */
 @RestController
 @RequestMapping("/api/igrejas")

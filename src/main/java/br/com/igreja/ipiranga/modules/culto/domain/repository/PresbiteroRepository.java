@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * Repositório para Presbíteros.
  * Camada: Domain
+ * 
+ * Permite buscar presbíteros associados a um culto específico.
  */
 public interface PresbiteroRepository extends JpaRepository<Presbitero, Long> {
     List<Presbitero> findByCultoId(Long cultoId);

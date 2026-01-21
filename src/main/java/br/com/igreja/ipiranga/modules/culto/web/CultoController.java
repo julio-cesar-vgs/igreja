@@ -13,6 +13,14 @@ import java.util.List;
  * Camada: Interface (Web)
  * 
  * Expõe as funcionalidades do contexto de Culto para o mundo externo via REST.
+ * Recebe requisições HTTP, valida dados básicos e delega o processamento para o CultoApplicationService.
+ * 
+ * Endpoints:
+ * - GET /api/cultos: Lista todos os cultos.
+ * - GET /api/cultos/{id}: Busca um culto por ID.
+ * - POST /api/cultos: Cria um novo culto.
+ * - PUT /api/cultos/{id}: Atualiza um culto existente.
+ * - DELETE /api/cultos/{id}: Remove um culto.
  */
 @RestController
 @RequestMapping("/api/cultos")

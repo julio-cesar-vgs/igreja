@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
  * Entidade de Domínio: Igreja
  * Camada: Domain
  * Contexto: Cadastro / Configuração
+ * 
+ * Representa uma unidade física da organização (Matriz ou Filial).
+ * Fundamental para o sistema Multi-tenant, pois cada registro de dados (Culto, Membro, Financeiro)
+ * estará associado a uma instância desta entidade.
  */
 @Entity
 @Table(name = "igrejas")

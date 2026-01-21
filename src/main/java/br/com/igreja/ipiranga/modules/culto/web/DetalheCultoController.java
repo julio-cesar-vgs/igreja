@@ -14,7 +14,12 @@ import org.springframework.web.bind.annotation.*;
  * Controller de Detalhes do Culto
  * Camada: Interface (Web)
  * 
- * Gerencia a inserção de itens específicos (louvores, ofertas, etc.) durante o culto.
+ * Gerencia a inserção de itens específicos (louvores, ofertas, dízimos, pessoas) associados a um culto.
+ * Atua como ponto de entrada para operações que enriquecem o agregado Culto com detalhes operacionais e financeiros.
+ * 
+ * Endpoints principais:
+ * - GET /api/cultos/{cultoId}/dashboard: Retorna uma visão consolidada do culto.
+ * - POST /api/cultos/{cultoId}/*: Adiciona itens específicos ao culto.
  */
 @RestController
 @RequestMapping("/api/cultos/{cultoId}")

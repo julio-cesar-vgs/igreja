@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * Repositório para Louvores.
  * Camada: Domain
+ * 
+ * Permite buscar louvores associados a um culto específico.
  */
 public interface LouvorRepository extends JpaRepository<Louvor, Long> {
     List<Louvor> findByCultoId(Long cultoId);

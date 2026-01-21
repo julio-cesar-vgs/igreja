@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * Repositório para Músicos.
  * Camada: Domain
+ * <p>
+ * Permite buscar músicos associados a um culto específico.
  */
 public interface MusicoRepository extends JpaRepository<Musico, Long> {
     List<Musico> findByCultoId(Long cultoId);

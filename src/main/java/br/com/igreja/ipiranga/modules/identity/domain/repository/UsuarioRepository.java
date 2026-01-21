@@ -8,6 +8,8 @@ import java.util.Optional;
 /**
  * Repositório para o Agregado Usuario.
  * Camada: Domain
+ * 
+ * Permite buscar usuários pelo email, utilizado principalmente no processo de autenticação.
  */
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmail(String email);

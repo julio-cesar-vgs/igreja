@@ -22,7 +22,13 @@ import java.util.List;
  * Camada: Application
  * 
  * Orquestra a adição de itens ao culto e a geração do dashboard.
- * Cruza informações dos contextos de Culto e Financeiro.
+ * Cruza informações dos contextos de Culto e Financeiro para fornecer uma visão unificada.
+ * 
+ * Responsabilidades:
+ * - Adicionar detalhes ao culto (Louvores, Músicos, etc.).
+ * - Registrar entradas financeiras (Dízimos, Ofertas) associadas ao culto.
+ * - Gerar o DTO de Dashboard consolidando todas as informações.
+ * - Publicar eventos de atualização via Kafka para notificações em tempo real.
  */
 @Service
 @RequiredArgsConstructor
@@ -39,6 +45,10 @@ public class DetalheCultoApplicationService {
     private final CultoRepository cultoRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
+    /**
+     * Consolida todas as informações de um culto em um único DTO.
+     * Realiza múltiplas consultas aos repositórios e cálculos de totais financeiros.
+     */
     public CultoDashboardDTO getDashboard(Long cultoId) {
         Culto culto = cultoRepository.findById(cultoId)
                 .orElseThrow(() -> new RuntimeException("Culto não encontrado"));

@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * Repositório para Visitantes.
  * Camada: Domain
+ * 
+ * Permite buscar visitantes associados a um culto específico.
  */
 public interface VisitanteRepository extends JpaRepository<Visitante, Long> {
     List<Visitante> findByCultoId(Long cultoId);

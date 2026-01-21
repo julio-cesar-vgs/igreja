@@ -19,7 +19,14 @@ import java.time.LocalDateTime;
  * Camada: Infrastructure
  * 
  * Implementa a preocupação transversal (cross-cutting concern) de auditoria.
- * Utiliza AOP para interceptar operações de escrita e registrar logs sem poluir o domínio.
+ * Utiliza AOP (Aspect Oriented Programming) para interceptar operações de escrita (save, delete)
+ * nos serviços de aplicação e registrar logs automaticamente, sem poluir o código de negócio.
+ * 
+ * Como funciona:
+ * 1. Define um Pointcut que identifica métodos 'save*' e 'delete*' nos ApplicationServices.
+ * 2. Usa @AfterReturning para executar a lógica de log após o sucesso do método interceptado.
+ * 3. Captura o usuário logado do SecurityContextHolder.
+ * 4. Persiste um registro em LogCorrecaoRepository.
  */
 @Aspect
 @Component

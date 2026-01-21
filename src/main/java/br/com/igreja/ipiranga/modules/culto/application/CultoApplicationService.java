@@ -16,6 +16,10 @@ import java.util.List;
  * Orquestra as operações de negócio para o contexto de Culto.
  * Esta camada é responsável por coordenar as tarefas e delegar a lógica para o domínio.
  * Também gerencia a publicação de eventos para o Kafka (Event-Driven).
+ * 
+ * Responsabilidades:
+ * - CRUD de Cultos.
+ * - Publicação de eventos de integração (culto-updates) para notificar outros sistemas ou componentes (ex: WebSocket).
  */
 @Service
 @RequiredArgsConstructor

@@ -6,6 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidade de Domínio: Musico
+ * Camada: Domain
+ * 
+ * Representa um músico que participou do culto.
+ * Utilizado para registro de escala e participação.
+ */
 @Entity
 @Table(name = "musicos")
 @Data

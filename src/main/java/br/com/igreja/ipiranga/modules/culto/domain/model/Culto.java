@@ -15,8 +15,11 @@ import java.time.LocalDateTime;
  * Camada: Domain
  * Padrão DDD: Aggregate Root (Raiz de Agregado)
  * 
+ * Representa um evento de culto realizado pela igreja.
  * Este é o centro do contexto de Culto. Todas as operações relacionadas ao culto
- * devem idealmente passar por este agregado para garantir a consistência.
+ * (como adicionar louvores, registrar ofertas) são logicamente agrupadas em torno deste agregado.
+ * 
+ * Herda de TenantEntity para garantir o isolamento dos dados por igreja (Multi-tenancy).
  */
 @Entity
 @Table(name = "cultos")

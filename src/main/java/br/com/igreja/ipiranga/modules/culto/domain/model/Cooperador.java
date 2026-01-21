@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 /**
  * Entidade de Domínio: Cooperador
  * Camada: Domain
+ * 
+ * Representa um cooperador que auxiliou no culto.
+ * Pode incluir informações sobre o cargo ou função específica exercida.
  */
 @Entity
 @Table(name = "cooperadores")

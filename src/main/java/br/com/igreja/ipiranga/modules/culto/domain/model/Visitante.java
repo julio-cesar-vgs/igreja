@@ -6,6 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidade de Domínio: Visitante
+ * Camada: Domain
+ * 
+ * Representa um visitante presente no culto.
+ * Importante para o acolhimento e acompanhamento de novos membros.
+ */
 @Entity
 @Table(name = "visitantes")
 @Data

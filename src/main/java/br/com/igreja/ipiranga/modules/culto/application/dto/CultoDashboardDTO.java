@@ -11,10 +11,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * DTO para o Dashboard Consolidado do Culto.
+ * DTO (Data Transfer Object) para o Dashboard Consolidado do Culto.
  * Camada: Application
  * 
- * Agrega informações de múltiplos contextos (Culto e Financeiro) para visualização.
+ * Agrega informações de múltiplos contextos (Culto e Financeiro) para visualização em uma única tela.
+ * Evita múltiplas requisições do frontend, fornecendo todos os dados necessários de uma só vez.
  */
 @Data
 @Builder

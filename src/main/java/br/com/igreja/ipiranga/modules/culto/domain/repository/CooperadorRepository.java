@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * Repositório para Cooperadores.
  * Camada: Domain
+ * 
+ * Permite buscar cooperadores associados a um culto específico.
  */
 public interface CooperadorRepository extends JpaRepository<Cooperador, Long> {
     List<Cooperador> findByCultoId(Long cultoId);
